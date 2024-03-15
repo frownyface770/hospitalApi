@@ -1,0 +1,69 @@
+GET http://127.0.0.1:8080/patients
+Content-Type: application/json
+
+###
+POST http://127.0.0.1:8080/patients/createPatient
+Content-Type: application/json
+
+{
+  "id": "2",
+"name": {
+    "firstName": "Macaco",
+    "lastName": "Banana"
+    },
+  "age": 23,
+  "email": "macaco@gmail.com",
+  "gender": "MALE",
+  "dateOfBirth": "1992-01-01"
+}
+
+###
+POST http://127.0.0.1:8080/patients/createPatient
+Content-Type: application/json
+
+{
+  "id": "2",
+  "name": {
+    "firstName": "Alberto",
+    "lastName": "Banana"
+    },
+  "age": 23
+}
+###
+POST http://127.0.0.1:8080/patients/1/updateInfo
+Content-Type: application/json
+
+  {
+    "name": {
+      "firstName": "Pokemon",
+      "lastName": "Pickachu"
+    },
+    "age": 54,
+    "email": "pickachu@gmail.com",
+    "gender": "MALE"
+  }
+
+###
+POST http://127.0.0.1:8080/patients/createPatient
+Content-Type: application/json
+
+{
+"name": {
+"firstName": "Alberto",
+"lastName": "Banana"
+},
+"age": 23
+}
+
+###
+POST http://127.0.0.1:8080/patients/createPatient
+Content-Type: application/json
+
+{
+  "id": "1",
+  "name": {
+    "firstName": "Alberto",
+    "lastName": "Banana"
+  },
+  "age": 23
+}
