@@ -32,6 +32,7 @@ class PatientDB {
         return patient
     }
 
+    //Updates the patient information by id
     fun updatePatient(patient: Patient) {
         //Finds the patient index from the db and updates the patient
         val index = patientStorage.indexOfFirst { it.id == patient.id }
@@ -39,30 +40,24 @@ class PatientDB {
             patientStorage[index] = patient
         }
     }
+    //Returns a list of the patients
     fun getPatients():List<Patient> {
         return patientStorage
     }
-    fun addPatient(newPatient: Patient): Boolean {
-        if (!patientStorage.any{it.id == newPatient.id}) {
-            patientStorage.add(newPatient)
-        } else {
-            return false
-        }
-        return true
+    //Adds the patient if none with that id is found
+    fun addPatient(newPatient: Patient) {
+        patientStorage.add(newPatient)
+    }
+    fun patientExists(patient: Patient):Boolean {
+        return patientStorage.any { it.id == patient.id}
     }
 }
-//internal val patientStorage = mutableListOf(
-//    Patient(
-//        "1",
-//        Name("Miguel", "Silva"),
-//        2,
-//        "sample@gmail.com",
-//        Gender.MALE,
-//        "23-02-1998")
-//)
 
 //Service layer that contains the logic or updating and general operations to the patient class
-//Seems to be the common architecture these days
+//This separates the database and the routing making for a more robust approach with clear separation of duties.
+//Database handles the data, service layer does the logic and interfaces with routing and database
+//Routing does handle the client requests and passes them on to the service layer.
+//Seems to be the common architecture these days as I understand it
 class PatientService(private val patientDB: PatientDB) {
     fun updatePatientDetails(id:String, updatedPatient: Patient): Boolean {
         val existingPatient = patientDB.getPatientById(id) ?: return false
@@ -78,8 +73,13 @@ class PatientService(private val patientDB: PatientDB) {
         return true
     }
     fun addPatient(newPatient: Patient): Boolean {
-        val success = patientDB.addPatient(newPatient)
-        return success
+        val patientExists = patientDB.patientExists(newPatient)
+        if (!patientExists) {
+            patientDB.addPatient(newPatient)
+            return true
+        } else {
+            return false
+        }
     }
     fun getPatients(): List<Patient> {
         return patientDB.getPatients()
