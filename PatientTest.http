@@ -6,7 +6,6 @@ POST http://127.0.0.1:8080/patients/createPatient
 Content-Type: application/json
 
 {
-  "id": "2",
 "name": {
     "firstName": "Macaco",
     "lastName": "Banana"
@@ -22,7 +21,6 @@ POST http://127.0.0.1:8080/patients/createPatient
 Content-Type: application/json
 
 {
-  "id": "2",
   "name": {
     "firstName": "Alberto",
     "lastName": "Banana"
@@ -60,10 +58,12 @@ POST http://127.0.0.1:8080/patients/createPatient
 Content-Type: application/json
 
 {
-  "id": "1",
   "name": {
-    "firstName": "Alberto",
-    "lastName": "Banana"
+    "firstName": "Joaquim",
+    "lastName": "Barraco"
   },
-  "age": 23
+  "age": 33
 }
+
+###
+DELETE http://127.0.0.1:8080/patients/delete/5

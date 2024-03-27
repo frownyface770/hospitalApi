@@ -2,7 +2,14 @@ package com.example.models
 
 
 import kotlinx.serialization.Serializable
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.UUID
+
 
 @Serializable
 class Patient(
@@ -10,47 +17,125 @@ class Patient(
     val id: String = UUID.randomUUID().toString(),
     internal var name :Name,
     internal var age: Int,
-    internal var email: String = "",
+    internal var email: String? = "",
     internal var gender: Gender= Gender.NONE,
     internal var dateOfBirth:String = "")
 
 
+
 //Class replacing the database for now
 class PatientDB {
-    private val patientStorage = mutableListOf(
-        Patient(
-            "1",
-            Name("Miguel", "Silva"),
-            2,
-            "sample@gmail.com",
-            Gender.MALE,
-            "23-02-1998")
-    )
-    fun getPatientById(id: String): Patient? {
-        //Finds the patient by id
-        val patient = patientStorage.find {it.id == id} ?: return null
-        return patient
-    }
-
-    //Updates the patient information by id
-    fun updatePatient(patient: Patient) {
-        //Finds the patient index from the db and updates the patient
-        val index = patientStorage.indexOfFirst { it.id == patient.id }
-        if (index != -1) {
-            patientStorage[index] = patient
+    init {
+        transaction {
+            SchemaUtils.create(Patients)
         }
     }
-    //Returns a list of the patients
+    fun getPatientById(id: String): Patient? {
+        //Finds the patient by id
+        try {
+            return transaction {
+                Patients.select { Patients.id eq id.toInt() }.map { rowToPatient(it) }.singleOrNull()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    //If list returned from db is empty, return false
+    fun patientExists(id: Int): Boolean {
+        try {
+            return transaction {
+                !Patients.select { Patients.id eq id}.empty()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+
+    }
+
+
+    fun updatePatient(patient: Patient) {
+        //Improvement
+        //Make it only changes values that actually need changing and
+        //Doesn't require all the values.
+        try {
+            transaction {
+                Patients.update({ Patients.id eq patient.id.toInt()}) {
+                    it[firstName] = patient.name.firstName
+                    it[lastName] = patient.name.lastName
+                    it[age] = patient.age
+                    it[email] = patient.email
+                    it[gender] = patient.gender
+                    it[dateOfBirth] = patient.dateOfBirth
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+    //Returns a list of the patients or an empty list if something happens
+    //NEEDS REFACTORING, WE SHOULD ALLOW EMPTY LIST RETURN AND NOT CONFUSE IT WITH EXCEPTION HANDLING
     fun getPatients():List<Patient> {
-        return patientStorage
+        try {
+            return transaction {
+                Patients.selectAll().map { rowToPatient(it) }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return emptyList()
+        }
+
     }
-    //Adds the patient if none with that id is found
-    fun addPatient(newPatient: Patient) {
-        patientStorage.add(newPatient)
+
+    fun addPatient(patient: Patient):Boolean {
+        try {
+            transaction {
+                Patients.insert {
+                    it[firstName] = patient.name.firstName
+                    it[lastName] = patient.name.lastName
+                    it[age] = patient.age
+                    it[email] = patient.email
+                    it[gender] = patient.gender
+                    it[dateOfBirth] = patient.dateOfBirth
+                }
+            }
+            return true
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+
     }
-    fun patientExists(patient: Patient):Boolean {
-        return patientStorage.any { it.id == patient.id}
+    fun deletePatient(idToDelete: String) {
+        try {
+            transaction {
+                Patients.deleteWhere { Patients.id eq idToDelete.toInt() }
+                println("Patient with ID $idToDelete deleted successfully.")
+            }
+        } catch (e:Exception) {
+            println("Error deleting patient with ID $idToDelete: ${e.message}")
+            e.printStackTrace()
+        }
+
     }
+
+
+    //Helper function
+    private fun rowToPatient(row : ResultRow) : Patient {
+        return Patient(
+            id = row[Patients.id].toString(),
+            name = Name(row[Patients.firstName], row[Patients.lastName]),
+            age = row[Patients.age],
+            email = row[Patients.email],
+            gender = row[Patients.gender],
+            dateOfBirth = row[Patients.dateOfBirth]
+        )
+    }
+
 }
 
 //Service layer that contains the logic or updating and general operations to the patient class
@@ -63,7 +148,10 @@ class PatientService(private val patientDB: PatientDB) {
         val existingPatient = patientDB.getPatientById(id) ?: return false
         //Updates the existing patient information with the one received.
         existingPatient.apply {
-            name = updatedPatient.name
+            name = Name(
+                firstName = updatedPatient.name.firstName,
+                lastName = updatedPatient.name.lastName
+            )
             age = updatedPatient.age
             email = updatedPatient.email
             gender = updatedPatient.gender
@@ -72,16 +160,27 @@ class PatientService(private val patientDB: PatientDB) {
         patientDB.updatePatient(existingPatient)
         return true
     }
+
+    fun getPatients(): List<Patient> {
+        return patientDB.getPatients()
+    }
     fun addPatient(newPatient: Patient): Boolean {
-        val patientExists = patientDB.patientExists(newPatient)
-        if (!patientExists) {
-            patientDB.addPatient(newPatient)
-            return true
+        val success = patientDB.addPatient(newPatient)
+        if (success) {
+            println("It worked!!!!!")
+            return success
+        } else {
+            println("Didnt work, service layer")
+            return success
+        }
+    }
+
+    fun deletePatient(id: String):Boolean {
+        if (patientDB.patientExists(id.toInt())) {
+            patientDB.deletePatient(id)
+        return true
         } else {
             return false
         }
-    }
-    fun getPatients(): List<Patient> {
-        return patientDB.getPatients()
     }
 }

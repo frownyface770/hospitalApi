@@ -1,0 +1,36 @@
+General:
+    Make sure to keep proper encapsulation.
+    Make sure to have proper error handling
+    There might be a lot of redundant or nonsensical code, should improve with time
+    Add comments
+
+Database:
+    Make sure we can run the database from different computers in a straightforward manner
+
+Models:
+    Might be wise to refactor patient code to use DAO
+    Patient:
+        To be debated if it makes sense to have these in the patient object or not.
+        We do need it in the database, but address for example could just be a different table with patient id as a foreign key
+
+        Add attributes like:
+            CitizenShip Card number
+            National Health id/number
+            Address
+            Profession
+
+Routes:
+    Expand patient routes beyond CRUD
+    Have an easier way to do exception management, have some kind of handler functions for exceptions if that makes sense
+
+Testing:
+    Have some kind of automated testing.
+    Maybe do the test before development of that functionality starts
+
+Next steps:
+    Add doctor, appointments routes
+    Add patient records
+    Refactor doctor and appointment routes with patient record support, or just do that directly
+
+
+
