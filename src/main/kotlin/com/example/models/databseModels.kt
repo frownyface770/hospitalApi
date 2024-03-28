@@ -5,12 +5,12 @@ import java.util.Date
 
 object Patients : Table() {
     val id = integer("id").autoIncrement()
-    val firstName = varchar("first_name", length=100)
-    val lastName = varchar("last_name", length=100)
+    val firstName = varchar("first_name", length = 100)
+    val lastName = varchar("last_name", length = 100)
     val age = integer("age")
     val email = varchar("email", length = 255).nullable()
     var gender = enumeration("gender", Gender::class)
-    var dateOfBirth = varchar("date_of_birth", length=20)
+    var dateOfBirth = varchar("date_of_birth", length = 20)
 
     //Overides the primaryKey and names it for clarity's sake
     override val primaryKey = PrimaryKey(id,name ="PK_Patients_ID")
@@ -29,14 +29,15 @@ object Doctors : Table() {
     override val primaryKey = PrimaryKey(id,name ="PK_Doctor_ID")
 }
 //criação da "base de dados" dos registos médicos
-object MedicalInformations: Table(){
+object MedicalInformations : Table() {
     //liga o id do paciente com a tabela do id do paciente
     val patientId = integer("patientId").references(Patients.id)
-    val data = varchar("data", length=10)
+    val data = varchar("data", length = 10)
     val sintoms = varchar("sintoms", length = 255)
-    val diagonostic = varchar("diagonostic",length = 255)
-    val medication = varchar("medication",length = 255)
+    val diagonostic = varchar("diagonostic", length = 255)
+    val medication = varchar("medication", length = 255)
     val notes = text("notes")
+
     //basicamente faz com que a chave primária seja o id do paciente
     override val primaryKey = PrimaryKey(patientId, name = "PK_MedicalInformation_ID")
 }
@@ -44,7 +45,7 @@ object MedicalInformations: Table(){
     val id = integer("id").autoIncrement()
     val date = varchar("date", length=20)
     val patientID = integer("patientID").references(Patients.id)
-    val doctorID = integer("doctorID").references(Doctor.id)
+    val doctorID = integer("doctorID").references(Doctors.id)
     val patientComments = text("patientComments")
 
     override val primaryKey = PrimaryKey(id)
