@@ -32,5 +32,6 @@ Next steps:
     Add patient records
     Refactor doctor and appointment routes with patient record support, or just do that directly
 
+Na rota update deveria ser possivel só atualizar os campos que queremos em vez de todos
 
 
