@@ -13,3 +13,15 @@ object Patients : Table() {
     override val primaryKey = PrimaryKey(id,name ="PK_Patients_ID")
 
 }
+//criação da "base de dados" dos registos médicos
+object MedicalInformations: Table(){
+    //liga o id do paciente com a tabela do id do paciente
+    val patientId = integer("patientId").references(Patients.id)
+    val data = varchar("data", length=10)
+    val sintoms = varchar("sintoms", length = 255)
+    val diagonostic = varchar("diagonostic",length = 255)
+    val medication = varchar("medication",length = 255)
+    val notes = text("notes")
+    //basicamente faz com que a chave primária seja o id do paciente
+    override val primaryKey = PrimaryKey(patient_id, name = "PK_MedicalInformation_ID")
+}
