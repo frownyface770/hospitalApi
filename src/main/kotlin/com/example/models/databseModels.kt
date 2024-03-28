@@ -1,5 +1,8 @@
 package com.example.models
+import org.jetbrains.exposed.sql.ForeignKeyConstraint
 import org.jetbrains.exposed.sql.Table
+import java.util.Date
+
 object Patients : Table() {
     val id = integer("id").autoIncrement()
     val firstName = varchar("first_name", length=100)
@@ -12,7 +15,6 @@ object Patients : Table() {
     //Overides the primaryKey and names it for clarity's sake
     override val primaryKey = PrimaryKey(id,name ="PK_Patients_ID")
 }
-
 object Doctors : Table() {
     val id = integer("id").autoIncrement()
     val firstName = varchar("first_name", length=100)
@@ -37,4 +39,13 @@ object MedicalInformations: Table(){
     val notes = text("notes")
     //basicamente faz com que a chave primária seja o id do paciente
     override val primaryKey = PrimaryKey(patientId, name = "PK_MedicalInformation_ID")
+}
+    object Appointments : Table() {
+    val id = integer("id").autoIncrement()
+    val date = varchar("date", length=20)
+    val patientID = integer("patientID").references(Patients.id)
+    val doctorID = integer("doctorID").references(Doctor.id)
+    val patientComments = text("patientComments")
+
+    override val primaryKey = PrimaryKey(id)
 }

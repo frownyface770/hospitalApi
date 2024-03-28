@@ -14,7 +14,7 @@ import java.util.UUID
 @Serializable
 class Patient(
     //Must change the id generation, its 128 bits and that is too long
-    val id: String = UUID.randomUUID().toString(),
+    val id: String,
     internal var name :Name,
     internal var age: Int,
     internal var email: String? = "",
@@ -52,9 +52,7 @@ class PatientDB {
             e.printStackTrace()
             return false
         }
-
     }
-
 
     fun updatePatient(patient: Patient) {
         //Improvement
