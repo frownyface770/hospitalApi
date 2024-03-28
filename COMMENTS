@@ -32,5 +32,6 @@ Next steps:
     Add patient records
     Refactor doctor and appointment routes with patient record support, or just do that directly
 
-
+Update Routing:
+    Só ser possivel alterar certos campos, não todos.
 
