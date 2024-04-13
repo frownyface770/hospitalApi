@@ -66,4 +66,17 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://127.0.0.1:8080/patients/delete/5
+DELETE http://127.0.0.1:8080/patients/delete/14
+
+###
+POST http://127.0.0.1:8080/patients/createPatient
+Content-Type: application/json
+
+{
+  "name": {
+    "firstName": "Test",
+    "lastName": "testing"
+  },
+  "age": 33,
+  "nationalHealthNumber": "123456789"
+}

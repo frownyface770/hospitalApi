@@ -1,0 +1,18 @@
+POST http://localhost:8080/doctor/createDoctor
+Content-Type: application/json
+
+{
+"name": {
+  "firstName": "Ricardo",
+  "lastName": "Pita"
+},
+  "age": 25,
+  "email": "",
+  "gender": "MALE",
+  "dateOfBirth": "1992-01-01",
+  "department": "Cardiology"
+}
+
+###
+GET http://localhost:8080/doctor
+Content-Type: application/json

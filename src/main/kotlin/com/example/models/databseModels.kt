@@ -1,7 +1,7 @@
 package com.example.models
 import org.jetbrains.exposed.sql.ForeignKeyConstraint
 import org.jetbrains.exposed.sql.Table
-import java.util.Date
+
 
 object Patients : Table() {
     val id = integer("id").autoIncrement()
@@ -11,6 +11,7 @@ object Patients : Table() {
     val email = varchar("email", length = 255).nullable()
     var gender = enumeration("gender", Gender::class)
     var dateOfBirth = varchar("date_of_birth", length = 20)
+    val nationalHealthNumber = varchar("national_health_number", length = 9).uniqueIndex();
 
     //Overides the primaryKey and names it for clarity's sake
     override val primaryKey = PrimaryKey(id,name ="PK_Patients_ID")
@@ -43,10 +44,14 @@ object MedicalInformations : Table() {
 }
     object Appointments : Table() {
     val id = integer("id").autoIncrement()
-    val date = varchar("date", length=20)
+    val date = varchar("date", length=10)
+    val time = varchar("time", length = 5)
     val patientID = integer("patientID").references(Patients.id)
     val doctorID = integer("doctorID").references(Doctors.id)
     val patientComments = text("patientComments")
 
     override val primaryKey = PrimaryKey(id)
+        init {
+            uniqueIndex(date,time, doctorID)
+        }
 }
