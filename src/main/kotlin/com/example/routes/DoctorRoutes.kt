@@ -17,6 +17,7 @@ class DoctorRoutes {
             createDoctor()
             updateDoctor()
             deleteDoctor()
+            availableHours()
         }
     }
     private fun Route.createDoctor() {
@@ -100,6 +101,18 @@ class DoctorRoutes {
             } catch (e: Exception) {
                 call.respondText("Error deleting doctor: ${e.message}",status = HttpStatusCode.InternalServerError)
             }
+        }
+    }
+
+    private fun Route.availableHours() {
+        get("/availableHours/{id}/{day}") {
+            val id = call.parameters["id"] ?: return@get call.respondText(
+                "Bad request",
+                status = HttpStatusCode.BadRequest
+            )
+            val day = call.parameters["day"] ?: return@get call.respondText ("Bad request",
+                status = HttpStatusCode.BadRequest  )
+            call.respond(doctorService.availableHours(id,day))
         }
     }
 }

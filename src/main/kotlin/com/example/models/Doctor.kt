@@ -4,18 +4,22 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.util.*
+import java.time.LocalDate
+import java.time.LocalTime
 
 @Serializable
 class Doctor(
     //Must change the id generation, its 128 bits and that is too long
-    val id: Int,
+    val id: Int = 1,
     internal var name :Name,
     internal var age: Int,
     internal var email: String? = "",
     internal var gender: Gender= Gender.NONE,
     internal var dateOfBirth:String = "",
-    internal var department: String = "")
+    internal var department: String = ""){
+    //Lets assume all doctors work the same schedule
+    val workingHours = listOf(Pair("08:00","12:00"),Pair("13:00","18:00"))
+}
 
 class DoctorDB {
     init {
@@ -130,6 +134,29 @@ class DoctorDB {
             dateOfBirth = row[Doctors.dateOfBirth]
         )
     }
+    //Fetches appointments for the doctor
+     internal fun fetchAppointments(docId: String):List<Appointment> {
+         try {
+             return transaction { Appointments.select{ Appointments.doctorID eq docId.toInt() }.map{
+                 Appointment(
+                     id = it[Appointments.id],
+                     doctorID = it[Appointments.doctorID],
+                     patientID = it[Appointments.patientID],
+                     date = it[Appointments.date],
+                     time = it[Appointments.time],
+                     patientComments = it[Appointments.patientComments]
+                 )
+             } }
+         } catch (e: Exception) {
+             e.printStackTrace()
+         }
+        return emptyList()
+    }
+    //Fetches the working hours for the doctor
+    internal fun fetchWorkingHours(docId: String):List<Pair<String, String>> {
+        val doctor = transaction { Doctors.select { Doctors.id eq docId.toInt() }.first() }
+        return rowToDoctor(doctor).workingHours
+    }
 
 }
 
@@ -179,4 +206,45 @@ class DoctorService(private val doctorDB: DoctorDB) {
             return false
         }
     }
+    //Complicated function that returns the available hours for the given day and doctor. Assuming each appointment is an hour long.
+    fun availableHours(id: String, date: String): List<String> {
+        val today = LocalDate.now()
+        val dateToCheck = LocalDate.of(date.slice(6..9).toInt(),date.slice(3..4).toInt(),date.slice(0..1).toInt())
+        if (dateToCheck.isBefore(today)) {
+            return emptyList()
+        }
+        val now = LocalTime.now()
+        println("today: $today now $now")
+        //Fetch the appointments for the day and doctor
+        val appointments = doctorDB.fetchAppointments(id).filter { it.date == date }
+        val availableSlots = mutableListOf<Int>()
+        //Get the doctor's working hours, for now they are all the same but that can change in the future
+        val workingHours = doctorDB.fetchWorkingHours(id).toMutableList()
+
+        //For each workingHour pair(start time, end time) we have a list of 2 pairs.
+        //Ex: Doctor starts at 8:00 and leaves at 12:00 for lunch returning at 13:00 and stays till 18:00.
+        //So we have 2 pairs of start and end time. (8:00, 12:00) and (13:00, 18:00)
+        workingHours.forEach { (start, end) ->
+            //Set current time at start and drop the (:00) and convert to int. For now we only care about the hour.
+            val startTime = LocalTime.parse(start)
+            println("Start time: $startTime")
+            var currentTime = if (startTime.isAfter(now)) {start.dropLast(3).toInt()} else {now.hour+1}
+            //While the time +1 is before the end time for the doctor we add that timeframe as available
+            while(currentTime + 1 <= end.dropLast(3).toInt()) {
+                availableSlots.add(currentTime)//Pair(currentTime, currentTime + 1)
+                currentTime += 1
+                println("Current time: $currentTime")
+            }
+        }
+        //For each of the appointments the doctor has for the day, we will take that timeSlot from his available hours
+        //since he is busy
+        appointments.forEach { appointment ->
+            availableSlots.removeIf { slot ->
+                slot >= appointment.time.dropLast(3).toInt() && slot +1 <= appointment.time.dropLast(3).toInt() + 1
+
+            }
+        }
+        return availableSlots.map { "$it:00" }
+    }
+
 }
