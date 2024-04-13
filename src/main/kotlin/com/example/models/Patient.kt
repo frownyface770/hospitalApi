@@ -13,13 +13,13 @@ import java.util.UUID
 
 @Serializable
 class Patient(
-    //Must change the id generation, its 128 bits and that is too long
-    val id: String,
+    val id: String = "10",
     internal var name :Name,
     internal var age: Int,
     internal var email: String? = "",
     internal var gender: Gender= Gender.NONE,
-    internal var dateOfBirth:String = "")
+    internal var dateOfBirth:String = "",
+    internal var nationalHealthNumber:String)
 
 
 
@@ -77,14 +77,15 @@ class PatientDB {
 
     //Returns a list of the patients or an empty list if something happens
     //NEEDS REFACTORING, WE SHOULD ALLOW EMPTY LIST RETURN AND NOT CONFUSE IT WITH EXCEPTION HANDLING
-    fun getPatients():List<Patient> {
+    fun getPatients():List<Patient>? {
         try {
             return transaction {
                 Patients.selectAll().map { rowToPatient(it) }
+
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            return emptyList()
+            return null
         }
 
     }
@@ -99,6 +100,7 @@ class PatientDB {
                     it[email] = patient.email
                     it[gender] = patient.gender
                     it[dateOfBirth] = patient.dateOfBirth
+                    it[nationalHealthNumber] = patient.nationalHealthNumber
                 }
             }
             return true
@@ -130,7 +132,8 @@ class PatientDB {
             age = row[Patients.age],
             email = row[Patients.email],
             gender = row[Patients.gender],
-            dateOfBirth = row[Patients.dateOfBirth]
+            dateOfBirth = row[Patients.dateOfBirth],
+            nationalHealthNumber = row[Patients.nationalHealthNumber]
         )
     }
 
@@ -160,17 +163,11 @@ class PatientService(private val patientDB: PatientDB) {
     }
 
     fun getPatients(): List<Patient> {
-        return patientDB.getPatients()
+        return patientDB.getPatients() ?: throw Exception("Database error")
     }
     fun addPatient(newPatient: Patient): Boolean {
         val success = patientDB.addPatient(newPatient)
-        if (success) {
-            println("It worked!!!!!")
-            return success
-        } else {
-            println("Didnt work, service layer")
-            return success
-        }
+        return success
     }
 
     fun deletePatient(id: String):Boolean {

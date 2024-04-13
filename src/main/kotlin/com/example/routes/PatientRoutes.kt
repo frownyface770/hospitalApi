@@ -5,6 +5,8 @@ import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlin.reflect.full.memberProperties
+
 class PatientRoutes {
     //Initializes the patient Database, will be replaced by an actual database, maybe...
     private val patientDB = PatientDB()
@@ -22,9 +24,9 @@ class PatientRoutes {
     private fun Route.createPatient() {
         post("/createPatient") {
             val patient = call.receive<Patient>()
-            //I dont know if i should check this here or not.
-            //Probably not.
-            //val addSuccess = patientService.addPatient(patient)
+//            if(patient::class.memberProperties.any { it.call(patient) == null }) {
+//                return@post call.respondText ( "Please provide all the required information.", status=HttpStatusCode.NotAcceptable )
+//            }
             try {
                 val addSuccess = patientService.addPatient(patient)
                 //Adds the patient details and stores the boolean value of operation's success
@@ -53,7 +55,7 @@ class PatientRoutes {
                     call.respondText("No patients found", status = HttpStatusCode.OK)
                 }
             } catch (e: Exception) {
-                call.respondText("Error retrieving patients ${e.message}", status = HttpStatusCode.InternalServerError)
+                call.respondText("Error retrieving patients. ${e.message}", status = HttpStatusCode.InternalServerError)
             }
 
         }
@@ -63,7 +65,7 @@ class PatientRoutes {
         post("{id?}/updateInfo") {
             //Get new patient info from the POST request
             val updatedPatient = call.receive<Patient>()
-
+    println(updatedPatient)
             //Get the id from the url parameters, if it's not there we send a bad request http code back
             val id = call.parameters["id"] ?: return@post call.respondText(
                 "Bad request",
