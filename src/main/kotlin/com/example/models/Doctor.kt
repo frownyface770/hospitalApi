@@ -1,5 +1,6 @@
 package com.example.models
 
+import com.example.plugins.PDFMaker
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -125,7 +126,8 @@ class DoctorDB {
 
     //Helper function
     private fun rowToDoctor(row : ResultRow) : Doctor {
-        return Doctor(
+
+        val doctorToReturn = Doctor(
             id = row[Doctors.id],
             name = Name(row[Doctors.firstName], row[Doctors.lastName]),
             age = row[Doctors.age],
@@ -133,6 +135,8 @@ class DoctorDB {
             gender = row[Doctors.gender],
             dateOfBirth = row[Doctors.dateOfBirth]
         )
+        doctorToReturn.department = row[Doctors.department]
+        return doctorToReturn
     }
     //Fetches appointments for the doctor
      internal fun fetchAppointments(docId: String):List<Appointment> {
@@ -245,6 +249,16 @@ class DoctorService(private val doctorDB: DoctorDB) {
             }
         }
         return availableSlots.map { "$it:00" }
+    }
+
+    fun printSchedule( id: String, startDate: String): String? {
+        val appointmentList = doctorDB.fetchAppointments(id)
+        val doctor = doctorDB.getDoctorById(id)
+        if (doctor != null) {
+            val path = PDFMaker.generatePDF(doctor,startDate,"$id-$startDate.pdf",appointmentList)
+            return path
+        }
+        return null
     }
 
 }

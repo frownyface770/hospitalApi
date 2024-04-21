@@ -18,6 +18,7 @@ class DoctorRoutes {
             updateDoctor()
             deleteDoctor()
             availableHours()
+            printSchedule()
         }
     }
     private fun Route.createDoctor() {
@@ -113,6 +114,17 @@ class DoctorRoutes {
             val day = call.parameters["day"] ?: return@get call.respondText ("Bad request",
                 status = HttpStatusCode.BadRequest  )
             call.respond(doctorService.availableHours(id,day))
+        }
+    }
+
+    private fun Route.printSchedule() {
+        get("/printSchedule/{id}/{startDate}") {
+            val id = call.parameters["id"] ?: return@get call.respondText("Bad request", status = HttpStatusCode.BadRequest)
+            val startDate = call.parameters["startDate"] ?: return@get call.respondText ("Bad request",
+                status = HttpStatusCode.BadRequest  )
+            println("Start date Route: $startDate")
+            val docPath = doctorService.printSchedule(id,startDate)
+            call.respondText("Path: $docPath")
         }
     }
 }
