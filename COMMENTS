@@ -1,5 +1,4 @@
 General:
-    Make sure to keep proper encapsulation.
     Make sure to have proper error handling
     There might be a lot of redundant or nonsensical code, should improve with time
     Add comments
@@ -8,7 +7,6 @@ Database:
     Make sure we can run the database from different computers in a straightforward manner
 
 Models:
-    Might be wise to refactor patient code to use DAO
     Patient:
         To be debated if it makes sense to have these in the patient object or not.
         We do need it in the database, but address for example could just be a different table with patient id as a foreign key
@@ -26,6 +24,13 @@ Routes:
 Testing:
     Have some kind of automated testing.
     Maybe do the test before development of that functionality starts
+
+Exception Handling:
+    Rework exception handling for proper http status response. It's lacking in it's current form, if we are to maintain
+    a similar pattern we need to rethrow the exceptions as we catch them, so we can respond accordingly up the chain.
+    There probably is a better way of doing error handling than what we currently have.
+    Should also centralize status response handling, as in make extension functions that can be reused instead of
+    rewriting the responses of the same code every time.
 
 Next steps:
     Add doctor, appointments routes

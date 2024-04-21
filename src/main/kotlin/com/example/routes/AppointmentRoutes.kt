@@ -32,7 +32,7 @@ class AppointmentRoutes {
                     call.respondText("Appointment already exists", status= HttpStatusCode.Conflict)
                 }
             } catch (e: Exception) {
-                call.respondText("Error creating appointment ${e.message}", status = HttpStatusCode.InternalServerError)
+                call.respondText("Error creating appointment. ${e.message}", status = HttpStatusCode.InternalServerError)
             }
         }
     }

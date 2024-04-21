@@ -11,7 +11,7 @@ object Patients : Table() {
     val email = varchar("email", length = 255).nullable()
     var gender = enumeration("gender", Gender::class)
     var dateOfBirth = varchar("date_of_birth", length = 20)
-    val nationalHealthNumber = varchar("national_health_number", length = 9).uniqueIndex();
+    val nationalHealthNumber = varchar("national_health_number", length = 9).uniqueIndex()
 
     //Overides the primaryKey and names it for clarity's sake
     override val primaryKey = PrimaryKey(id,name ="PK_Patients_ID")

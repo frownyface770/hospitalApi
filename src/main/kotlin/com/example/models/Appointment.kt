@@ -1,15 +1,15 @@
 package com.example.models
 
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import kotlinx.serialization.Serializable
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.Date
 
+@Serializable
 class Appointment(
-    val id: Int,
+    val id: Int = 1,
     val date: String,
+    val time: String,
     val patientID: Int,
     val doctorID: Int,
     val patientComments: String)
@@ -20,7 +20,6 @@ class AppointmentDB {
             SchemaUtils.create(Appointments)
         }
     }
-
 
     fun getAppointmentByPatient(id: Int):List<Appointment> {
         try {
@@ -33,12 +32,14 @@ class AppointmentDB {
         }
     }
 
+
     fun addAppointment(appointment: Appointment): Boolean {
         try {
             transaction {
                 Appointments.insert {
                     it[date] = appointment.date
                     it[patientID] = appointment.patientID
+                    it[time] = appointment.time
                     it[doctorID] = appointment.doctorID
                     it[patientComments] = appointment.patientComments
                 }
@@ -46,14 +47,21 @@ class AppointmentDB {
             return true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            if (e.message?.contains("appointments_date_time_doctorid_unique") == true) {
+                throw Exception("Appointment already exists at that time for the given doctor. Choose another time or doctor")
+            }
+            throw Exception("Refer to the documentation for more information.")
+           // return false
         }
     }
+
+
 
     private fun rowToAppointment(row: ResultRow): Appointment {
         return Appointment(
             id = row[Appointments.id],
             date = row[Appointments.date],
+            time = row[Appointments.time],
             patientID = row[Appointments.patientID],
             doctorID = row[Appointments.doctorID],
             patientComments = row[Appointments.patientComments]
@@ -67,6 +75,7 @@ class AppointmentService(private val appointmentDB: AppointmentDB) {
     }
 
     fun addAppointment(newAppointment: Appointment): Boolean {
+
         return appointmentDB.addAppointment(newAppointment)
     }
 }

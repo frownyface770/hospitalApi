@@ -1,0 +1,25 @@
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"20-04-2024",
+  "patientID": 1,
+  "time": "12:00",
+  "doctorID": 1,
+  "patientComments": "Massive headache everytime i have to work in this godforsaken project. Help."
+}
+###
+GET http://127.0.0.1:8080/appointment/1
+Content-Type: application/json
+
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date": "13-04-2024",
+  "time": "15:00",
+  "patientID": 6,
+  "doctorID": 1,
+  "patientComments": "Testing"
+}
