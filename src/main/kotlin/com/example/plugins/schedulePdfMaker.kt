@@ -38,9 +38,10 @@ object PDFMaker {
 
         dateFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy")
         val formattedDate = startDate.format(dateFormatter)
+        val endDate = startDate.plusDays(6).format(dateFormatter)
         contentStream.beginText()
         contentStream.newLineAtOffset(50f, 730f)
-        contentStream.showText("Week of: $formattedDate")
+        contentStream.showText("Week of: $formattedDate - $endDate")
         contentStream.endText()
 
         // Draw table headers
@@ -48,11 +49,24 @@ object PDFMaker {
         val rowHeight = 30f
         val startX = 30f
         val startY = 670f
-        val days = arrayOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+        val days = mutableListOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
+        //Get current day of the week
+        val weekDay = startDate.dayOfWeek.toString()
+        val daysToShift = when(weekDay) {
+            "MONDAY" -> 0
+            "TUESDAY" -> 6
+            "WEDNESDAY" -> 5
+            "THURSDAY" -> 4
+            "FRIDAY" -> 3
+            "SATURDAY" -> 2
+            "SUNDAY" -> 1
+            else -> 0
+        }
+        Collections.rotate(days,daysToShift)
         // Get Schedule data from the database
 
-        val scheduleData = getData(appointments,startDate)
+        val scheduleData = getData(appointments,startDate, weekDay)
 
         // Draw row headers with borders and centered text
         var y = startY - rowHeight
@@ -97,7 +111,7 @@ object PDFMaker {
             for (j in 0 until 11) {
                 val cellData = scheduleData[i][j]
                 //If it's lunch and not saturday or sunday
-                if (j == 4 && i != 6 && i!=5 ) {
+                if (j == 4 && days[i] != "Saturday" && days[i] != "Sunday" ) {
                     val lightGray = Color(220, 220, 220)
                     contentStream.setNonStrokingColor(lightGray)
                     contentStream.addRect(startX+columnWidth*(1+i),startY-rowHeight*5, columnWidth,rowHeight)
@@ -145,7 +159,7 @@ object PDFMaker {
 
     }
 
-    fun getData(appointmentList: List<Appointment>, startDateRaw:LocalDate):Array<Array<String>> {
+    fun getData(appointmentList: List<Appointment>, startDateRaw:LocalDate, weekDay:String):Array<Array<String>> {
 
         val scheduleData = Array(7) { Array(11) { "" } }
 
@@ -160,14 +174,24 @@ object PDFMaker {
         val calendar = Calendar.getInstance()
         calendar.time = startDate
         //Get the end date of schedule
-        calendar.add(Calendar.DAY_OF_YEAR,7)
+        calendar.add(Calendar.DAY_OF_YEAR,6)
         val endDate = calendar.time
         //Reset calendar time to start date
         calendar.time = startDate
 
+        val weekDayOffSet = when (weekDay) {
+            "MONDAY" -> 5
+            "TUESDAY" -> 4
+            "WEDNESDAY" -> 3
+            "THURSDAY" -> 2
+            "FRIDAY" -> 1
+            "SATURDAY" -> 0
+            "SUNDAY" -> -1
+            else -> 0
+        }
         //While we dont reach the endDate, for every appointment we have if the dates match, store it in the appointments for day
         while (calendar.time <= endDate) {
-            val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK) - 2 // Adjusting for Sunday
+            val dayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) +weekDayOffSet)%7 //- 2 // Adjusting for Sunday
             val appointmentsForDay = appointmentList.filter { appointment ->
                 val dateString = appointment.date
 
@@ -193,8 +217,8 @@ object PDFMaker {
 
 
             //While they still have the same 8:00 to 12:00 and 13:00 to 18:00
-            if (dayOfWeek+2 != Calendar.SUNDAY && dayOfWeek+2 != Calendar.SATURDAY) {
-
+           // if (dayOfWeek+2 != Calendar.SUNDAY && dayOfWeek+2 != Calendar.SATURDAY) {
+            if (dayOfWeek != weekDayOffSet +1 && dayOfWeek != weekDayOffSet && weekDayOffSet != 0 && weekDayOffSet != -1) {
                 scheduleData[dayOfWeek][12-8] = "Lunch"
             }
 

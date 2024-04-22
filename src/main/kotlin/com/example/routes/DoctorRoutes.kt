@@ -122,7 +122,6 @@ class DoctorRoutes {
             val id = call.parameters["id"] ?: return@get call.respondText("Bad request", status = HttpStatusCode.BadRequest)
             val startDate = call.parameters["startDate"] ?: return@get call.respondText ("Bad request",
                 status = HttpStatusCode.BadRequest  )
-            println("Start date Route: $startDate")
             val docPath = doctorService.printSchedule(id,startDate)
             call.respondText("Path: $docPath")
         }
