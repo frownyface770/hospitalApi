@@ -21,6 +21,7 @@ class MedicalInformation(
     internal var diagnostic: String,
     internal var medication: String,
     internal var notes: String
+)
 //class para as transações da API
 class MedicalInformatonDB{
     //inicializador de transação
@@ -29,8 +30,18 @@ class MedicalInformatonDB{
             SchemaUtils.create(MedicalInformations)
         }
     }
+    fun rowToMedicalInformation(row : ResultRow) : MedicalInformation{
+        return MedicalInformation(
+            patientId = row[MedicalInformations.patientId],
+            data = row[MedicalInformations.data],
+            sintoms = row[MedicalInformations.sintoms],
+            diagnostic = row[MedicalInformations.diagonostic],
+            medication = row[MedicalInformations.medication],
+            notes = row[MedicalInformations.notes]
+        )
+    }
     //função que retorna a pesquisa dos registos médicos através do ID do paciente
-    fun getMedicalInformationByID(patientId: Int): MedicalInformation?{
+    fun getMedicalInformationByID(patientId: Int): List<MedicalInformation> {
         return transaction{
             MedicalInformations.select{
                 MedicalInformations.patientId eq patientId
@@ -38,7 +49,6 @@ class MedicalInformatonDB{
                 .mapNotNull{
                     rowToMedicalInformation(it)
                 }
-                .singleOrNull()
         }
     }
     //função que retorna um valor verdadeiro ou falso se a informação sobre o registo existir
@@ -60,7 +70,7 @@ class MedicalInformatonDB{
         }
     }
     //extrair todos os registos médicos
-    fun getMedicalInformations():List<MedicalInformation>{
+    fun getMedicalInformations(): List<Unit> {
         return transaction{
             MedicalInformations.selectAll().map{rowToMedicalInformation(it)}
         }
