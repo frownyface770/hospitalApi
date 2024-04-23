@@ -58,14 +58,14 @@ class MedicalInformatonDB{
         }
     }
     //faz o update dos dados dos registos medicos
-    fun updateMedicalInformation(medicalInformation: MedicalInformation){
+    fun updateMedicalInformation(medicalInformation: MedicalInformations){
         transaction{
             MedicalInformations.update({
-                it[data] = medicalInformation.data
-                it[sintoms] = medicalInformation.sintoms
-                it[diagnostic] = medicalInformation.diagnostic
-                it[medication] = medicalInformation.medication
-                it[notes] = medicalInformation.notes
+                it[data] = MedicalInformations.data
+                it[sintoms] = medicalInformations.sintoms
+                it[diagnostic] = medicalInformations.diagnostic
+                it[medication] = medicalInformations.medication
+                it[notes] = medicalInformations.notes
             })
         }
     }
