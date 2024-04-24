@@ -14,7 +14,7 @@ import java.util.UUID
 @Serializable
 class Patient(
     //Must change the id generation, its 128 bits and that is too long
-    val id: String,
+    val id: String = "1",
     internal var name :Name,
     internal var age: Int,
     internal var email: String? = "",

@@ -6,8 +6,8 @@ POST http://127.0.0.1:8080/patients/createPatient
 Content-Type: application/json
 
 {
-"name": {
-    "firstName": "Macaco",
+  "name": {
+    "firstName": "Joao",
     "lastName": "Banana"
     },
   "age": 23,
@@ -66,4 +66,4 @@ Content-Type: application/json
 }
 
 ###
-DELETE http://127.0.0.1:8080/patients/delete/5
+DELETE http://127.0.0.1:8080/patients/delete/1
