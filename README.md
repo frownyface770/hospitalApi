@@ -9,7 +9,7 @@ Requisitos
 
 Configuração da Base de Dados
 
-Pode ser necessário adicionar a base de dados no IntelliJ IDEA. As configurações estão disponíveis no arquivo fornecido no GitHub.
+Pode ser necessário adicionar a base de dados no IntelliJ IDEA. As configurações estão disponíveis no arquivo fornecido ConfiguraçaoDB.png
 
 
 Certifique-se de seguir as instruções para configurar corretamente a base de dados antes de executar o projeto.
