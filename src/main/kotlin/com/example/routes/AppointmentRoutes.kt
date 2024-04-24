@@ -19,6 +19,8 @@ class AppointmentRoutes {
         }
     }
 
+    //If an error occurs it will always go into the catch and never use the success boolean
+    //Must change
     private fun Route.createAppointment() {
         post("/createAppointment") {
             val appointment = call.receive<Appointment>()

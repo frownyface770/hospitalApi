@@ -1,0 +1,352 @@
+###
+GET http://127.0.0.1:8080/appointment/2
+Content-Type: application/json
+###
+//Populate table with randomish data
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"22-04-2024",
+  "patientID": 1,
+  "time": "13:00",
+  "doctorID": 1,
+  "patientComments": "Massive headache everytime i have to work in this godforsaken project. Help."
+}
+
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"22-04-2024",
+  "patientID": 10,
+  "time": "15:00",
+  "doctorID": 2,
+  "patientComments": "Feeling a bit dizzy lately, need some advice."
+}
+
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"17-04-2024",
+  "patientID": 4,
+  "time": "13:00",
+  "doctorID": 3,
+  "patientComments": "Experiencing chest pain, need urgent checkup."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"17-04-2024",
+  "patientID": 12,
+  "time": "09:00",
+  "doctorID": 5,
+  "patientComments": "Annual checkup, making sure the clock keeps on ticking."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"17-04-2024",
+  "patientID": 9,
+  "time": "11:00",
+  "doctorID": 1,
+  "patientComments": "Feeling nauseous after meals, need consultation."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"18-04-2024",
+  "patientID": 16,
+  "time": "14:00",
+  "doctorID": 4,
+  "patientComments": "Stomachache persists despite medication, need further evaluation."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"18-04-2024",
+  "patientID": 14,
+  "time": "11:00",
+  "doctorID": 2,
+  "patientComments": "Recent injury, need examination."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"19-04-2024",
+  "patientID": 5,
+  "time": "15:00",
+  "doctorID": 3,
+  "patientComments": "Having trouble sleeping, need advice."
+}
+
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"17-04-2024",
+  "patientID": 1,
+  "time": "16:00",
+  "doctorID": 4,
+  "patientComments": "Chronic back pain, need consultation."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"18-04-2024",
+  "patientID": 11,
+  "time": "08:00",
+  "doctorID": 5,
+  "patientComments": "Follow-up appointment for diabetes management."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"19-04-2024",
+  "patientID": 13,
+  "time": "17:00",
+  "doctorID": 1,
+  "patientComments": "High fever, need immediate attention."
+}
+
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"23-04-2024",
+  "patientID": 15,
+  "time": "10:00",
+  "doctorID": 3,
+  "patientComments": "Routine checkup."
+}
+
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"23-04-2024",
+  "patientID": 4,
+  "time": "11:00",
+  "doctorID": 5,
+  "patientComments": "Persistent cough, need examination."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"24-04-2024",
+  "patientID": 10,
+  "time": "14:00",
+  "doctorID": 2,
+  "patientComments": "Annual flu shot."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"23-04-2024",
+  "patientID": 1,
+  "time": "09:00",
+  "doctorID": 4,
+  "patientComments": "Frequent headaches, need consultation."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"23-04-2024",
+  "patientID": 13,
+  "time": "16:00",
+  "doctorID": 1,
+  "patientComments": "Allergic reaction, need urgent attention."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"22-04-2024",
+  "patientID": 11,
+  "time": "13:00",
+  "doctorID": 2,
+  "patientComments": "Follow-up for previous surgery."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"23-04-2024",
+  "patientID": 5,
+  "time": "10:00",
+  "doctorID": 3,
+  "patientComments": "Persistent joint pain, need examination."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"25-04-2024",
+  "patientID": 9,
+  "time": "08:00",
+  "doctorID": 4,
+  "patientComments": "Follow-up for diabetes management."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"22-04-2024",
+  "patientID": 14,
+  "time": "15:00",
+  "doctorID": 5,
+  "patientComments": "Recent injury, need examination."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"24-04-2024",
+  "patientID": 16,
+  "time": "13:00",
+  "doctorID": 1,
+  "patientComments": "Experiencing shortness of breath, need urgent checkup."
+}
+
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+  "date":"20-04-2024",
+  "patientID": 12,
+  "time": "10:00",
+  "doctorID": 3,
+  "patientComments": "Having trouble sleeping, need advice."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+"date":"21-04-2024",
+"patientID": 9,
+"time": "09:00",
+"doctorID": 4,
+"patientComments": "Routine checkup."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+"date":"22-04-2024",
+"patientID": 5,
+"time": "14:00",
+"doctorID": 1,
+"patientComments": "Experiencing chest pain, need urgent checkup."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+"date":"23-04-2024",
+"patientID": 14,
+"time": "15:00",
+"doctorID": 5,
+"patientComments": "High fever, need immediate attention."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+"date":"24-04-2024",
+"patientID": 16,
+"time": "16:00",
+"doctorID": 2,
+"patientComments": "Recent injury, need examination."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+"date":"20-04-2024",
+"patientID": 11,
+"time": "08:00",
+"doctorID": 4,
+"patientComments": "Follow-up for diabetes management."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+"date":"21-04-2024",
+"patientID": 1,
+"time": "17:00",
+"doctorID": 3,
+"patientComments": "Stomachache persists despite medication, need further evaluation."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+"date":"22-04-2024",
+"patientID": 10,
+"time": "13:00",
+"doctorID": 2,
+"patientComments": "Follow-up appointment for diabetes management."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+"date":"23-04-2024",
+"patientID": 4,
+"time": "11:00",
+"doctorID": 5,
+"patientComments": "Chronic back pain, need consultation."
+}
+###
+POST http://127.0.0.1:8080/appointment/createAppointment
+Content-Type: application/json
+
+{
+"date":"24-04-2024",
+"patientID": 15,
+"time": "13:00",
+"doctorID": 1,
+"patientComments": "Feeling a bit dizzy lately, need some advice."
+}

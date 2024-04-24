@@ -129,19 +129,20 @@ object PDFMaker {
                 }
             }
         }
+
         // Draw horizontal lines between rows
         for (i in 0 until 12) {
             contentStream.moveTo(startX, startY - i * rowHeight)
             contentStream.lineTo(startX + columnWidth*8, startY - i * rowHeight)
             contentStream.stroke()
         }
+
         // Draw vertical lines between columns
         for (i in 0 until days.size + 2) {
             contentStream.moveTo(startX + i * columnWidth, startY)
             contentStream.lineTo(startX + i * columnWidth, startY - 11 * rowHeight)
             contentStream.stroke()
         }
-
 
         contentStream.close()
     try {
@@ -159,7 +160,8 @@ object PDFMaker {
 
     }
 
-    fun getData(appointmentList: List<Appointment>, startDateRaw:LocalDate, weekDay:String):Array<Array<String>> {
+    private fun getData(appointmentList: List<Appointment>, startDateRaw:LocalDate, weekDay:String):Array<Array<String>> {
+
 
         val scheduleData = Array(7) { Array(11) { "" } }
 
@@ -203,7 +205,6 @@ object PDFMaker {
                 calendar.get(Calendar.YEAR) == year.toInt() && calendar.get(Calendar.MONTH) +1== month.toInt() && calendar.get(Calendar.DAY_OF_MONTH) == day.toInt()
 
             }
-
             //For every appointment today write appointment to file at the appropriate times
             appointmentsForDay.forEach { appointment ->
 
@@ -225,7 +226,6 @@ object PDFMaker {
             calendar.add(Calendar.DAY_OF_YEAR, 1) // Move to the next day
 
         }
-
 
         return scheduleData
     }
