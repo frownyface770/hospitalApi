@@ -1,5 +1,5 @@
 ###
-GET http://127.0.0.1:8080/appointment/2
+GET http://127.0.0.1:8080/appointment/1
 Content-Type: application/json
 ###
 //Populate table with randomish data
@@ -12,7 +12,7 @@ Content-Type: application/json
   "patientID": 1,
   "time": "13:00",
   "doctorID": 1,
-  "patientComments": "Massive headache everytime i have to work in this godforsaken project. Help."
+  "patientComments": "Massive headache. Help."
 }
 
 ###

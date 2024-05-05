@@ -49,9 +49,10 @@ object PDFMaker {
         val rowHeight = 30f
         val startX = 30f
         val startY = 670f
-        val days = mutableListOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+        val days = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
-        //Get current day of the week
+        //Get current day of the week by choosing correct offset and using the rotate method to shift by that offset.
+
         val weekDay = startDate.dayOfWeek.toString()
         val daysToShift = when(weekDay) {
             "MONDAY" -> 0
@@ -77,6 +78,7 @@ object PDFMaker {
             contentStream.beginText()
             contentStream.setFont(PDType1Font.HELVETICA_BOLD, 10f)
             val textWidth = PDType1Font.HELVETICA_BOLD.getStringWidth("$hour:00") / 1000 * 10f
+            //Set newline at proper coordinates for center alignment.
             contentStream.newLineAtOffset(startX + (columnWidth - textWidth) / 2, y + rowHeight / 2 - 5)
             contentStream.showText("$hour:00")
             contentStream.endText()
@@ -107,7 +109,7 @@ object PDFMaker {
 
 
         // Draw schedule data
-        for (i in 0 until days.size) {
+        for (i in days.indices) {
             for (j in 0 until 11) {
                 val cellData = scheduleData[i][j]
                 //If it's lunch and not saturday or sunday
@@ -154,7 +156,7 @@ object PDFMaker {
         return filePath+fileName
     } catch (e: IOException) {
         e.printStackTrace()
-        println("Error occured with saving the file.")
+        println("Error occurred with saving the file.")
         return "Internal server error" //maybe change this
     }
 
@@ -165,12 +167,12 @@ object PDFMaker {
 
         val scheduleData = Array(7) { Array(11) { "" } }
 
-        //Use simpleDateFormat because if of the same time of Calender.time
-        var dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        //Use simpleDateFormat because if of the same time of Calendar.time
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
 
         //Format the start date
         val startDate = dateFormat.parse(startDateRaw.toString())
-        dateFormat = SimpleDateFormat("dd-MM-yyyy")
+
 
         //Get a calendar object and set it to the start time of the schedule
         val calendar = Calendar.getInstance()
@@ -191,7 +193,7 @@ object PDFMaker {
             "SUNDAY" -> -1
             else -> 0
         }
-        //While we dont reach the endDate, for every appointment we have if the dates match, store it in the appointments for day
+        //While we don't reach the endDate, for every appointment we have if the dates match, store it in the appointments for day
         while (calendar.time <= endDate) {
             val dayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) +weekDayOffSet)%7 //- 2 // Adjusting for Sunday
             val appointmentsForDay = appointmentList.filter { appointment ->
@@ -218,7 +220,7 @@ object PDFMaker {
 
 
             //While they still have the same 8:00 to 12:00 and 13:00 to 18:00
-           // if (dayOfWeek+2 != Calendar.SUNDAY && dayOfWeek+2 != Calendar.SATURDAY) {
+
             if (dayOfWeek != weekDayOffSet +1 && dayOfWeek != weekDayOffSet && weekDayOffSet != 0 && weekDayOffSet != -1) {
                 scheduleData[dayOfWeek][12-8] = "Lunch"
             }
