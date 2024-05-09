@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @Serializable
 //criação da class
 class MedicalInformation(
-    //Must change the id generation, its 128 bits and that is too long
+    val id:Int,
     val patientId: Int,
     internal var data: String,
     internal var sintoms: String,
@@ -29,6 +29,7 @@ class MedicalInformationDB{
     }
     fun rowToMedicalInformation(row : ResultRow) : MedicalInformation{
         return MedicalInformation(
+            id = row[MedicalInformations.id],
             patientId = row[MedicalInformations.patientId],
             data = row[MedicalInformations.data],
             sintoms = row[MedicalInformations.sintoms],
@@ -37,39 +38,73 @@ class MedicalInformationDB{
             notes = row[MedicalInformations.notes]
         )
     }
-    //função que retorna a pesquisa dos registos médicos através do ID do paciente
-    fun getMedicalInformationByID(patientId: Int): List<MedicalInformation> {
-        return transaction{
-            MedicalInformations.select{
-                MedicalInformations.patientId eq patientId
+    //function to get the id of the medicalInformation
+    fun getMedicalInformationById(id: Int) : MedicalInformation?{
+        try {
+            return transaction{
+                MedicalInformations.select{
+                    MedicalInformations.id eq id
+                }.mapNotNull {
+                        rowToMedicalInformation(it)
+                }.first()
             }
-                .mapNotNull{
-                    rowToMedicalInformation(it)
+        }catch (e: Exception){
+            println("Error: ${e.message}")
+            return null
+        }
+    }
+    //função que retorna a pesquisa dos registos médicos através do ID do paciente
+    fun getMedicalInformationByPatientId(patientId: Int): List<MedicalInformation> {
+        try {
+            return transaction{
+                MedicalInformations.select{
+                    MedicalInformations.patientId eq patientId
                 }
+                    .mapNotNull{
+                        rowToMedicalInformation(it)
+                    }
+            }
+        }catch (e: Exception){
+            println("Error: ${e.message}")
+            return emptyList()
         }
     }
     //função que retorna um valor verdadeiro ou falso se a informação sobre o registo existir
     fun medicalInformationExists(patientId: Int): Boolean{
-        return transaction{
-            !MedicalInformations.select{ MedicalInformations.patientId eq patientId}.empty()
+        try {
+            return transaction{
+                !MedicalInformations.select{ MedicalInformations.patientId eq patientId}.empty()
+            }
+        }catch (e: Exception){
+            println("Error: ${e.message}")
+            return false
         }
     }
     //faz o update dos dados dos registos medicos
     fun updateMedicalInformation(medicalInformation: MedicalInformations){
-        transaction{
-            MedicalInformations.update{
-                it[data] = MedicalInformations.data
-                it[sintoms] = MedicalInformations.sintoms
-                it[diagonostic] = MedicalInformations.diagonostic
-                it[medication] = MedicalInformations.medication
-                it[notes] = MedicalInformations.notes
+        try {
+            transaction{
+                MedicalInformations.update{
+                    it[data] = MedicalInformations.data
+                    it[sintoms] = MedicalInformations.sintoms
+                    it[diagonostic] = MedicalInformations.diagonostic
+                    it[medication] = MedicalInformations.medication
+                    it[notes] = MedicalInformations.notes
+                }
             }
+        }catch (e: Exception){
+            println("Error: ${e.message}")
         }
     }
     //extrair todos os registos médicos
     fun getMedicalInformations(): List<MedicalInformation> {
-        return transaction{
-            MedicalInformations.selectAll().map{rowToMedicalInformation(it)}
+        try {
+            return transaction{
+                MedicalInformations.selectAll().map{rowToMedicalInformation(it)}
+            }
+        }catch (e: Exception){
+            println("Error: ${e.message}")
+            return emptyList()
         }
     }
     //função para adicionar registo médico à base de dados
@@ -91,3 +126,14 @@ class MedicalInformationDB{
         }
     }
 }
+//This is a class to interact with the "program" it self. Basicaly is a class that takes care of the logic of the information above
+//that comes from the database.
+class MedicalInformationService(private val medicalInformationDB:MedicalInformationDB){
+    fun updateMedicalInformation(id:Int,medicalInformationUpdated: MedicalInformation){
+        val existingMedicalInformation = medicalInformationDB.getMedicalInformationById(id) ?: throw Exception("This MedicalInformation doesn't exist")
+        //more to code here...
+
+    }
+}
+
+
