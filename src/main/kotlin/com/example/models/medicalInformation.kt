@@ -129,10 +129,17 @@ class MedicalInformationDB{
 //This is a class to interact with the "program" it self. Basicaly is a class that takes care of the logic of the information above
 //that comes from the database.
 class MedicalInformationService(private val medicalInformationDB:MedicalInformationDB){
-    fun updateMedicalInformation(id:Int,medicalInformationUpdated: MedicalInformation){
+    fun updateMedicalInformationData(id:Int,medicalInformationUpdated: MedicalInformation): Boolean {
         val existingMedicalInformation = medicalInformationDB.getMedicalInformationById(id) ?: throw Exception("This MedicalInformation doesn't exist")
-        //more to code here...
-
+        existingMedicalInformation.apply {
+            data = medicalInformationUpdated.data
+            sintoms = medicalInformationUpdated.sintoms
+            diagnostic = medicalInformationUpdated.diagnostic
+            medication = medicalInformationUpdated.medication
+            notes = medicalInformationUpdated.notes
+        }
+        medicalInformationDB.updateMedicalInformationData(existingMedicalInformation)
+        return trues
     }
 }
 
