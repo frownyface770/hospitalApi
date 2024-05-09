@@ -1,4 +1,5 @@
 package com.example.models
+import com.example.models.Doctors.autoIncrement
 import org.jetbrains.exposed.sql.ForeignKeyConstraint
 import org.jetbrains.exposed.sql.Table
 
@@ -31,7 +32,7 @@ object Doctors : Table() {
 }
 //criação da "base de dados" dos registos médicos
 object MedicalInformations : Table() {
-    //liga o id do paciente com a tabela do id do paciente
+    val id = integer("id").autoIncrement()
     val patientId = integer("patientId").references(Patients.id)
     val data = varchar("data", length = 10)
     val sintoms = varchar("sintoms", length = 255)
