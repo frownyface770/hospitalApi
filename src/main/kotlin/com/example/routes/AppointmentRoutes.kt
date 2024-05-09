@@ -19,6 +19,8 @@ class AppointmentRoutes {
         }
     }
 
+    //If an error occurs it will always go into the catch and never use the success boolean
+    //Must change
     private fun Route.createAppointment() {
         post("/createAppointment") {
             val appointment = call.receive<Appointment>()
@@ -28,9 +30,10 @@ class AppointmentRoutes {
 
                 if (success) {
                     call.respondText("Appointment stored correctly", status = HttpStatusCode.Created)
-                } else {
-                    call.respondText("Appointment already exists", status= HttpStatusCode.Conflict)
                 }
+//                else {
+//                    call.respondText("Appointment already exists", status= HttpStatusCode.Conflict)
+//                }
             } catch (e: Exception) {
                 call.respondText("Error creating appointment. ${e.message}", status = HttpStatusCode.InternalServerError)
             }
@@ -39,7 +42,8 @@ class AppointmentRoutes {
     private fun Route.listAppointments() {
         get("/{id}") {
             val id = call.parameters["id"] ?: return@get call.respondText(
-                "Bad request"
+                "Bad request",
+                status = HttpStatusCode.BadRequest
             )
             try {
                 val appointmentStorage = appointmentService.getApointments(id.toInt())

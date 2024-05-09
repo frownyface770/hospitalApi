@@ -217,6 +217,7 @@ class DoctorService(private val doctorDB: DoctorDB) {
         if (dateToCheck.isBefore(today)) {
             return emptyList()
         }
+
         val now = LocalTime.now()
         println("today: $today now $now")
         //Fetch the appointments for the day and doctor
@@ -232,7 +233,7 @@ class DoctorService(private val doctorDB: DoctorDB) {
             //Set current time at start and drop the (:00) and convert to int. For now we only care about the hour.
             val startTime = LocalTime.parse(start)
             println("Start time: $startTime")
-            var currentTime = if (startTime.isAfter(now)) {start.dropLast(3).toInt()} else {now.hour+1}
+            var currentTime = if (!startTime.isAfter(now) && dateToCheck.isEqual(today)) {now.hour+1} else { start.dropLast(3).toInt()}
             //While the time +1 is before the end time for the doctor we add that timeframe as available
             while(currentTime + 1 <= end.dropLast(3).toInt()) {
                 availableSlots.add(currentTime)//Pair(currentTime, currentTime + 1)

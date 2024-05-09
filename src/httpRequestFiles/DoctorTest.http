@@ -1,0 +1,102 @@
+POST http://localhost:8080/doctor/createDoctor
+Content-Type: application/json
+
+{
+"name": {
+  "firstName": "Ricardo",
+  "lastName": "Pita"
+},
+  "age": 25,
+  "email": "",
+  "gender": "MALE",
+  "dateOfBirth": "1992-01-01",
+  "department": "Cardiology"
+}
+
+###
+POST http://localhost:8080/doctor/createDoctor
+Content-Type: application/json
+
+{
+  "name": {
+    "firstName": "Laura",
+    "lastName": "Gonzalez"
+  },
+  "age": 40,
+  "email": "laura.gonzalez@example.com",
+  "gender": "FEMALE",
+  "dateOfBirth": "1984-09-12",
+  "department": "Orthopedics"
+}
+
+###
+POST http://localhost:8080/doctor/createDoctor
+Content-Type: application/json
+
+{
+  "name": {
+    "firstName": "Daniel",
+    "lastName": "Chen"
+  },
+  "age": 35,
+  "email": "daniel.chen@example.com",
+  "gender": "MALE",
+  "dateOfBirth": "1989-05-25",
+  "department": "Neurology"
+}
+
+###
+POST http://localhost:8080/doctor/createDoctor
+Content-Type: application/json
+
+{
+  "name": {
+    "firstName": "Emma",
+    "lastName": "Brown"
+  },
+  "age": 45,
+  "email": "emma.brown@example.com",
+  "gender": "FEMALE",
+  "dateOfBirth": "1979-12-03",
+  "department": "Pediatrics"
+}
+
+
+
+###
+GET http://localhost:8080/doctor
+Content-Type: application/json
+
+###
+GET http://localhost:8080/doctor/availableHours/1/13-04-2024
+Content-Type: application/json
+
+###
+POST http://localhost:8080/doctor/createDoctor
+Content-Type: application/json
+
+{
+  "name": {
+    "firstName": "Miguel",
+    "lastName": "Silva"
+  },
+  "age": 25,
+  "email": "brainfiddler@brains.com",
+  "gender": "MALE",
+  "dateOfBirth": "1998-01-01",
+  "department": "Neurology"
+}
+
+###
+GET http://localhost:8080/doctor/availableHours/4/10-05-2024
+Content-Type: application/json
+
+####
+GET http://localhost:8080/doctor/availableHours/4/17-04-2024
+Content-Type: application/json
+###
+GET http://localhost:8080/doctor/availableHours/4/05-05-2024
+Content-Type: application/json
+
+####
+GET http://localhost:8080/doctor/printSchedule/1/17-04-2024

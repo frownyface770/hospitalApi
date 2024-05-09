@@ -47,6 +47,9 @@ class AppointmentDB {
             return true
         } catch (e: Exception) {
             e.printStackTrace()
+            //We have a unique index in the database table of the date, time and doc id, if we try to insert another
+            // appointment with those same details and exception is thrown. That message contains this exact message.
+            // So we catch it and return a more meaningful message to the user.
             if (e.message?.contains("appointments_date_time_doctorid_unique") == true) {
                 throw Exception("Appointment already exists at that time for the given doctor. Choose another time or doctor")
             }
