@@ -81,15 +81,15 @@ class MedicalInformationDB{
         }
     }
     //this makes the update of the MedicalInformation
-    fun updateMedicalInformation(medicalInformation: MedicalInformations){
+    fun updateMedicalInformation(medicalInformation: MedicalInformation){
         try {
             transaction{
-                MedicalInformations.update{
-                    it[data] = MedicalInformations.data
-                    it[sintoms] = MedicalInformations.sintoms
-                    it[diagonostic] = MedicalInformations.diagonostic
-                    it[medication] = MedicalInformations.medication
-                    it[notes] = MedicalInformations.notes
+                MedicalInformations.update({ MedicalInformations.id eq medicalInformation.id }){
+                    it[data] = medicalInformation.data
+                    it[sintoms] = medicalInformation.sintoms
+                    it[diagonostic] = medicalInformation.diagnostic
+                    it[medication] = medicalInformation.medication
+                    it[notes] = medicalInformation.notes
                 }
             }
         }catch (e: Exception){
@@ -108,7 +108,7 @@ class MedicalInformationDB{
         }
     }
     //this makes the insert of the MedicalInformation
-    fun addMedicalInformation(medicalInformation: MedicalInformations):Boolean{
+    fun addMedicalInformation(medicalInformation: MedicalInformation):Boolean{
         return try {
             transaction{
                 MedicalInformations.insert{
@@ -138,6 +138,7 @@ class MedicalInformationDB{
 //This is a class to interact with the "program" it self. Basicaly is a class that takes care of the logic of the information above
 //that comes from the database.
 class MedicalInformationService(private val medicalInformationDB:MedicalInformationDB){
+    //this method of this class MedicalInformationService its used as a way to make the updateMedicalInformation work.
     fun updateMedicalInformationData(id:Int,medicalInformationUpdated: MedicalInformation): Boolean {
         val existingMedicalInformation = medicalInformationDB.getMedicalInformationById(id) ?: throw Exception("This MedicalInformation doesn't exist")
         existingMedicalInformation.apply {
@@ -147,11 +148,21 @@ class MedicalInformationService(private val medicalInformationDB:MedicalInformat
             medication = medicalInformationUpdated.medication
             notes = medicalInformationUpdated.notes
         }
-        //bug on this line idk why
-        medicalInformationDB.updateMedicalInformationData(existingMedicalInformation)
+        medicalInformationDB.updateMedicalInformation(existingMedicalInformation)
         return true
     }
-    
+    //this method of this class MedicalInformationService its used as a way to make the getMedicalInformation work.
+    fun getMedicalInformation(): List<MedicalInformation> {
+        return medicalInformationDB.getMedicalInformations()
+    }
+    fun addMedicalInformation(newmedicalInformation: MedicalInformation): Boolean {
+        try {
+            return medicalInformationDB.addMedicalInformation(newmedicalInformation)
+        }catch (e:Exception){
+            println("Error: ${e.message}")
+            return false
+        }
+    }
 }
 
 
