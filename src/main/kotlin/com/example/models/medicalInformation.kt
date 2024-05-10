@@ -1,4 +1,5 @@
 package com.example.models
+import io.ktor.server.engine.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -155,11 +156,22 @@ class MedicalInformationService(private val medicalInformationDB:MedicalInformat
     fun getMedicalInformation(): List<MedicalInformation> {
         return medicalInformationDB.getMedicalInformations()
     }
+    //this method of this class MedicalInformationService its used as a way to make the addMedicalInformation work.
     fun addMedicalInformation(newmedicalInformation: MedicalInformation): Boolean {
         try {
             return medicalInformationDB.addMedicalInformation(newmedicalInformation)
         }catch (e:Exception){
             println("Error: ${e.message}")
+            return false
+        }
+    }
+    //this method of this class MedicalInformationService its used as a way to make the deleteMedicalInformation work.
+    fun deleteMedicalInformation(idMed: Int):Boolean{
+        if (medicalInformationDB.medicalInformationExists(idMed)) {
+            medicalInformationDB.deleteMedicalInformation(idMed)
+            return true
+        }else{
+            throw Exception("This MedicalInformation doesn't exist")
             return false
         }
     }
