@@ -7,9 +7,9 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-//serialização
+//it is like a compiler for the json data
 @Serializable
-//criação da class
+//this is the class that gets the info of the MedicalInformation
 class MedicalInformation(
     val id:Int,
     val patientId: Int,
@@ -19,7 +19,7 @@ class MedicalInformation(
     internal var medication: String,
     internal var notes: String
 )
-//class para as transações da API
+//This is a class for the sql transactions, comunicates with DB
 class MedicalInformationDB{
     //inicializador de transação
     init {
@@ -38,7 +38,7 @@ class MedicalInformationDB{
             notes = row[MedicalInformations.notes]
         )
     }
-    //function to get the id of the medicalInformation
+    //this function returns a view in a list format where the Id is the filter
     fun getMedicalInformationById(id: Int) : MedicalInformation?{
         try {
             return transaction{
@@ -53,7 +53,7 @@ class MedicalInformationDB{
             return null
         }
     }
-    //função que retorna a pesquisa dos registos médicos através do ID do paciente
+    //this function returns a view in a list format where the patientId is the filter
     fun getMedicalInformationByPatientId(patientId: Int): List<MedicalInformation> {
         try {
             return transaction{
@@ -69,7 +69,7 @@ class MedicalInformationDB{
             return emptyList()
         }
     }
-    //função que retorna um valor verdadeiro ou falso se a informação sobre o registo existir
+    //this function works to return a value true or false
     fun medicalInformationExists(patientId: Int): Boolean{
         try {
             return transaction{
@@ -80,7 +80,7 @@ class MedicalInformationDB{
             return false
         }
     }
-    //faz o update dos dados dos registos medicos
+    //this makes the update of the MedicalInformation
     fun updateMedicalInformation(medicalInformation: MedicalInformations){
         try {
             transaction{
@@ -96,7 +96,7 @@ class MedicalInformationDB{
             println("Error: ${e.message}")
         }
     }
-    //extrair todos os registos médicos
+    //this makes a list of the data in the sql DB
     fun getMedicalInformations(): List<MedicalInformation> {
         try {
             return transaction{
@@ -107,7 +107,7 @@ class MedicalInformationDB{
             return emptyList()
         }
     }
-    //função para adicionar registo médico à base de dados
+    //this makes the insert of the MedicalInformation
     fun addMedicalInformation(medicalInformation: MedicalInformations):Boolean{
         return try {
             transaction{
@@ -125,6 +125,15 @@ class MedicalInformationDB{
             false
         }
     }
+    fun deleteMedicalInformation(idMed: Int){
+        try {
+            transaction {
+                MedicalInformations.deleteWhere { id eq idMed }
+            }
+        }catch (e: Exception){
+            println("Error: ${e.message}")
+        }
+    }
 }
 //This is a class to interact with the "program" it self. Basicaly is a class that takes care of the logic of the information above
 //that comes from the database.
@@ -138,9 +147,11 @@ class MedicalInformationService(private val medicalInformationDB:MedicalInformat
             medication = medicalInformationUpdated.medication
             notes = medicalInformationUpdated.notes
         }
+        //bug on this line idk why
         medicalInformationDB.updateMedicalInformationData(existingMedicalInformation)
-        return trues
+        return true
     }
+    
 }
 
 
