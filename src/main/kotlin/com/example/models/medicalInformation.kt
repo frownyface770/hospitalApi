@@ -55,7 +55,7 @@ class MedicalInformationDB{
         }
     }
     //this function returns a view in a list format where the patientId is the filter
-    fun getMedicalInformationByPatientId(patientId: Int): List<MedicalInformation> {
+    fun getMedicalInformationByPatientId(patientId: Int): MedicalInformation?{
         try {
             return transaction{
                 MedicalInformations.select{
@@ -63,11 +63,11 @@ class MedicalInformationDB{
                 }
                     .mapNotNull{
                         rowToMedicalInformation(it)
-                    }
+                    }.first()
             }
         }catch (e: Exception){
             println("Error: ${e.message}")
-            return emptyList()
+            return null
         }
     }
     //this function works to return a value true or false
@@ -86,6 +86,22 @@ class MedicalInformationDB{
         try {
             transaction{
                 MedicalInformations.update({ MedicalInformations.id eq medicalInformation.id }){
+                    it[data] = medicalInformation.data
+                    it[sintoms] = medicalInformation.sintoms
+                    it[diagonostic] = medicalInformation.diagnostic
+                    it[medication] = medicalInformation.medication
+                    it[notes] = medicalInformation.notes
+                }
+            }
+        }catch (e: Exception){
+            println("Error: ${e.message}")
+        }
+    }
+    //this makes the update of the MedicalInformation using the patientId
+    fun updateMedicalInformationPatient(medicalInformation: MedicalInformation){
+        try {
+            transaction{
+                MedicalInformations.update({ MedicalInformations.patientId eq medicalInformation.patientId }){
                     it[data] = medicalInformation.data
                     it[sintoms] = medicalInformation.sintoms
                     it[diagonostic] = medicalInformation.diagnostic
@@ -139,7 +155,7 @@ class MedicalInformationDB{
 //This is a class to interact with the "program" it self. Basicaly is a class that takes care of the logic of the information above
 //that comes from the database.
 class MedicalInformationService(private val medicalInformationDB:MedicalInformationDB){
-    //this method of this class MedicalInformationService its used as a way to make the updateMedicalInformation work.
+    //this method of this class MedicalInformationService its used as a way to make the updateMedicalInformation work by id.
     fun updateMedicalInformationData(id:Int,medicalInformationUpdated: MedicalInformation): Boolean {
         val existingMedicalInformation = medicalInformationDB.getMedicalInformationById(id) ?: throw Exception("This MedicalInformation doesn't exist")
         existingMedicalInformation.apply {
@@ -150,6 +166,19 @@ class MedicalInformationService(private val medicalInformationDB:MedicalInformat
             notes = medicalInformationUpdated.notes
         }
         medicalInformationDB.updateMedicalInformation(existingMedicalInformation)
+        return true
+    }
+    //this method of this class MedicalInformationService its used as a way to make the updateMedicalInformation work by patientId.
+    fun updateMedicalInformationDataPatient(patientid:Int,medicalInformationUpdated: MedicalInformation): Boolean {
+        val existingInformation = medicalInformationDB.getMedicalInformationByPatientId(patientid) ?: throw Exception("This MedicalInformation doesn't exist")
+        existingInformation.apply {
+            data = medicalInformationUpdated.data
+            sintoms = medicalInformationUpdated.sintoms
+            diagnostic = medicalInformationUpdated.diagnostic
+            medication = medicalInformationUpdated.medication
+            notes = medicalInformationUpdated.notes
+        }
+        medicalInformationDB.updateMedicalInformationPatient(existingInformation)
         return true
     }
     //this method of this class MedicalInformationService its used as a way to make the getMedicalInformation work.
