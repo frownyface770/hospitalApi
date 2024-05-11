@@ -1,6 +1,7 @@
 package com.example.routes
 
 import com.example.models.*
+import com.example.exceptions.*
 import io.ktor.server.application.*
 import io.ktor.http.*
 import io.ktor.server.request.*
@@ -16,6 +17,7 @@ class AppointmentRoutes {
         route.route("/appointment") {
             listAppointments()
             createAppointment()
+            updateAppointment()
         }
     }
 
@@ -26,14 +28,13 @@ class AppointmentRoutes {
             val appointment = call.receive<Appointment>()
 
             try {
-                val success = appointmentService.addAppointment(appointment)
+                 appointmentService.addAppointment(appointment)
 
-                if (success) {
-                    call.respondText("Appointment stored correctly", status = HttpStatusCode.Created)
-                }
-//                else {
-//                    call.respondText("Appointment already exists", status= HttpStatusCode.Conflict)
-//                }
+
+                call.respondText("Appointment stored correctly", status = HttpStatusCode.Created)
+
+            } catch (e: AppointmentAlreadyExistsException) {
+                call.respondText("Appointment already exists", status= HttpStatusCode.Conflict)
             } catch (e: Exception) {
                 call.respondText("Error creating appointment. ${e.message}", status = HttpStatusCode.InternalServerError)
             }
@@ -47,15 +48,33 @@ class AppointmentRoutes {
             )
             try {
                 val appointmentStorage = appointmentService.getApointments(id.toInt())
-                if (appointmentStorage.isNotEmpty()) {
-                    call.respond(appointmentStorage)
-                } else {
-                    call.respondText("No appointments found", status = HttpStatusCode.OK)
-                }
+
+                call.respond(appointmentStorage)
+
             } catch (e: Exception) {
                 call.respondText("Error retrieving appointments ${e.message}", status = HttpStatusCode.InternalServerError)
             }
         }
     }
+    private fun Route.updateAppointment() {
+        put("/updateAppointment/{id}") {
+            val id = call.parameters["id"] ?: return@put call.respondText(
+                "Bad request",
+                status = HttpStatusCode.BadRequest
+            )
+            val updatedAppointment = call.receive<Appointment>()
+
+            try {
+                appointmentService.updateAppointment(id,updatedAppointment)
+                call.respondText("Appointment updated correctly", status = HttpStatusCode.OK)
+            } catch (e: AppointmentNotFoundException) {
+                call.respondText("Appointment not found", status = HttpStatusCode.NotFound)
+            } catch (e: Exception) {
+                call.respondText("Error updating appointment. ${e.message}", status = HttpStatusCode.InternalServerError)
+            }
+        }
+    }
+
+
 
 }
