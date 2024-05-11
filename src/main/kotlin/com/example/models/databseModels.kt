@@ -1,4 +1,5 @@
 package com.example.models
+import com.example.models.Doctors.autoIncrement
 import org.jetbrains.exposed.sql.ForeignKeyConstraint
 import org.jetbrains.exposed.sql.Table
 
@@ -29,18 +30,15 @@ object Doctors : Table() {
     //Overides the primaryKey and names it for clarity's sake
     override val primaryKey = PrimaryKey(id,name ="PK_Doctor_ID")
 }
-//criação da "base de dados" dos registos médicos
+//creation of the table MedicalInformations
 object MedicalInformations : Table() {
-    //liga o id do paciente com a tabela do id do paciente
+    val id = integer("id").autoIncrement()
     val patientId = integer("patientId").references(Patients.id)
     val data = varchar("data", length = 10)
     val sintoms = varchar("sintoms", length = 255)
     val diagonostic = varchar("diagonostic", length = 255)
     val medication = varchar("medication", length = 255)
     val notes = text("notes")
-
-    //basicamente faz com que a chave primária seja o id do paciente
-    override val primaryKey = PrimaryKey(patientId, name = "PK_MedicalInformation_ID")
 }
     object Appointments : Table() {
     val id = integer("id").autoIncrement()
