@@ -4,6 +4,8 @@ import com.example.exceptions.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+
 import java.util.Date
 
 @Serializable
@@ -41,6 +43,11 @@ class AppointmentDB {
             e.printStackTrace()
             throw e
 
+        }
+    }
+    fun appointmentExists(id: Int): Boolean {
+        return transaction {
+            !Appointments.select { Appointments.id eq id }.empty()
         }
     }
 
@@ -85,6 +92,17 @@ class AppointmentDB {
         }
     }
 
+    fun deleteAppointment(idToDelete: Int) {
+        try {
+            transaction {
+                Appointments.deleteWhere { Appointments.id eq idToDelete }
+            }
+        } catch (e: Exception) {
+            println("Error deleting appointment with ID $idToDelete: ${e.message}")
+            e.printStackTrace()
+        }
+
+    }
 
     private fun rowToAppointment(row: ResultRow): Appointment {
         return Appointment(
@@ -119,6 +137,17 @@ class AppointmentService(private val appointmentDB: AppointmentDB) {
         appointmentDB.updateAppointment(updatedAppointment)
 
     }
+
+    fun deleteAppointment(idRaw:String) {
+        val id = idRaw.toInt()
+        if (appointmentDB.appointmentExists(id)) {
+            appointmentDB.deleteAppointment(id)
+        } else {
+            throw AppointmentNotFoundException(idRaw)
+        }
+
+    }
+
 }
 
 

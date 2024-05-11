@@ -18,6 +18,7 @@ class AppointmentRoutes {
             listAppointments()
             createAppointment()
             updateAppointment()
+            deleteAppointment()
         }
     }
 
@@ -68,9 +69,25 @@ class AppointmentRoutes {
                 appointmentService.updateAppointment(id,updatedAppointment)
                 call.respondText("Appointment updated correctly", status = HttpStatusCode.OK)
             } catch (e: AppointmentNotFoundException) {
-                call.respondText("Appointment not found", status = HttpStatusCode.NotFound)
+                call.respondText("${e.message}", status = HttpStatusCode.NotFound)
             } catch (e: Exception) {
                 call.respondText("Error updating appointment. ${e.message}", status = HttpStatusCode.InternalServerError)
+            }
+        }
+    }
+
+    private fun Route.deleteAppointment() {
+        delete("/deleteAppointment/{id}") {
+            val id = call.parameters["id"] ?: return@delete call.respondText(
+                "Bad request",
+                status = HttpStatusCode.BadRequest)
+            try {
+                appointmentService.deleteAppointment(id)
+                call.respondText("Appointment deleted successfully", status = HttpStatusCode.OK)
+            } catch (e: AppointmentNotFoundException) {
+                call.respondText("${e.message}", status = HttpStatusCode.NotFound)
+            } catch (e: Exception) {
+                call.respondText("Error deleting appointment. ${e.message}", status = HttpStatusCode.InternalServerError)
             }
         }
     }

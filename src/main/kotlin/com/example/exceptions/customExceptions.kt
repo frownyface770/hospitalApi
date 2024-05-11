@@ -5,5 +5,5 @@ class PatientNotFoundException(id: String) : Exception("Patient with $id doesn't
 
 
 class AppointmentAlreadyExistsException() : Exception("An appointment for that day, time and doctor already exists.")
-class AppointmentNotFoundException(id:String): Exception("Appoint with $id id not found")
+class AppointmentNotFoundException(id:String): Exception("Appointment with $id id not found")
 class ServiceException(message: String?, val originalException: Exception) : Exception(message)

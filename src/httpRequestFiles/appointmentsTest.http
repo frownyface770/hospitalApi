@@ -8,7 +8,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"22-04-2024",
+  "date":"08-05-2024",
   "patientID": 1,
   "time": "13:00",
   "doctorID": 1,
@@ -20,7 +20,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"22-04-2024",
+  "date":"08-05-2024",
   "patientID": 10,
   "time": "15:00",
   "doctorID": 2,
@@ -32,7 +32,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"17-04-2024",
+  "date":"08-05-2024",
   "patientID": 4,
   "time": "13:00",
   "doctorID": 3,
@@ -43,7 +43,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"17-04-2024",
+  "date":"08-05-2024",
   "patientID": 12,
   "time": "09:00",
   "doctorID": 5,
@@ -54,7 +54,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"17-04-2024",
+  "date":"08-05-2024",
   "patientID": 9,
   "time": "11:00",
   "doctorID": 1,
@@ -65,7 +65,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"18-04-2024",
+  "date":"08-05-2024",
   "patientID": 16,
   "time": "14:00",
   "doctorID": 4,
@@ -76,7 +76,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"18-04-2024",
+  "date":"08-05-2024",
   "patientID": 14,
   "time": "11:00",
   "doctorID": 2,
@@ -87,7 +87,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"19-04-2024",
+  "date":"09-05-2024",
   "patientID": 5,
   "time": "15:00",
   "doctorID": 3,
@@ -99,7 +99,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"17-04-2024",
+  "date":"09-05-2024",
   "patientID": 1,
   "time": "16:00",
   "doctorID": 4,
@@ -110,7 +110,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"18-04-2024",
+  "date":"09-05-2024",
   "patientID": 11,
   "time": "08:00",
   "doctorID": 5,
@@ -121,7 +121,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"19-04-2024",
+  "date":"09-05-2024",
   "patientID": 13,
   "time": "17:00",
   "doctorID": 1,
@@ -133,7 +133,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"23-04-2024",
+  "date":"09-05-2024",
   "patientID": 15,
   "time": "10:00",
   "doctorID": 3,
@@ -145,7 +145,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"23-04-2024",
+  "date":"09-05-2024",
   "patientID": 4,
   "time": "11:00",
   "doctorID": 5,
@@ -156,7 +156,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"24-04-2024",
+  "date":"09-05-2024",
   "patientID": 10,
   "time": "14:00",
   "doctorID": 2,
@@ -167,7 +167,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"23-04-2024",
+  "date":"10-05-2024",
   "patientID": 1,
   "time": "09:00",
   "doctorID": 4,
@@ -178,7 +178,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"23-04-2024",
+  "date":"10-05-2024",
   "patientID": 13,
   "time": "16:00",
   "doctorID": 1,
@@ -189,7 +189,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"22-04-2024",
+  "date":"10-05-2024",
   "patientID": 11,
   "time": "13:00",
   "doctorID": 2,
@@ -200,7 +200,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"23-04-2024",
+  "date":"10-05-2024",
   "patientID": 5,
   "time": "10:00",
   "doctorID": 3,
@@ -211,7 +211,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"25-04-2024",
+  "date":"10-05-2024",
   "patientID": 9,
   "time": "08:00",
   "doctorID": 4,
@@ -222,7 +222,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"22-04-2024",
+  "date":"10-05-2024",
   "patientID": 14,
   "time": "15:00",
   "doctorID": 5,
@@ -233,7 +233,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"24-04-2024",
+  "date":"10-05-2024",
   "patientID": 16,
   "time": "13:00",
   "doctorID": 1,
@@ -245,7 +245,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"20-04-2024",
+  "date":"08-05-2024",
   "patientID": 12,
   "time": "10:00",
   "doctorID": 3,
@@ -256,7 +256,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-"date":"21-04-2024",
+"date":"09-05-2024",
 "patientID": 9,
 "time": "09:00",
 "doctorID": 4,
@@ -267,7 +267,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-"date":"22-04-2024",
+"date":"09-05-2024",
 "patientID": 5,
 "time": "14:00",
 "doctorID": 1,
@@ -278,7 +278,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-"date":"23-04-2024",
+"date":"10-05-2024",
 "patientID": 14,
 "time": "15:00",
 "doctorID": 5,
@@ -289,7 +289,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-"date":"24-04-2024",
+"date":"10-05-2024",
 "patientID": 16,
 "time": "16:00",
 "doctorID": 2,
@@ -300,7 +300,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-"date":"20-04-2024",
+"date":"08-05-2024",
 "patientID": 11,
 "time": "08:00",
 "doctorID": 4,
@@ -311,7 +311,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-"date":"21-04-2024",
+"date":"09-05-2024",
 "patientID": 1,
 "time": "17:00",
 "doctorID": 3,
@@ -350,3 +350,31 @@ Content-Type: application/json
 "doctorID": 1,
 "patientComments": "Feeling a bit dizzy lately, need some advice."
 }
+
+
+###
+PUT http://127.0.0.1:8080/appointment/updateAppointment/54
+Content-Type: application/json
+
+{
+  "date":"13-05-2024",
+  "patientID": 4,
+  "time": "13:00",
+  "doctorID": 5,
+  "patientComments": "Feeling a bit dizzy lately, need some advice."
+}
+###
+PUT http://127.0.0.1:8080/appointment/updateAppointment/5000
+Content-Type: application/json
+
+{
+  "date":"13-05-2024",
+  "patientID": 4,
+  "time": "13:00",
+  "doctorID": 5,
+  "patientComments": "Feeling a bit dizzy lately, need some advice."
+}
+###
+DELETE http://127.0.0.1:8080/appointment/deleteAppointment/54
+###
+DELETE http://127.0.0.1:8080/appointment/deleteAppointment/540
