@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDate
 import java.time.LocalTime
+import com.example.exceptions.*
 
 @Serializable
 class Doctor(
@@ -171,20 +172,13 @@ class DoctorDB {
 //Seems to be the common architecture these days as I understand it
 class DoctorService(private val doctorDB: DoctorDB) {
     fun updateDoctorDetails(id:String, updatedDoctor: Doctor): Boolean {
-        val existingDoctor = doctorDB.getDoctorById(id) ?: return false
-        //Updates the existing doctor information with the one received.
-//        existingDoctor.apply {
-//            name = Name(
-//                firstName = updatedDoctor.name.firstName,
-//                lastName = updatedDoctor.name.lastName
-//            )
-//            age = updatedDoctor.age
-//            email = updatedDoctor.email
-//            gender = updatedDoctor.gender
-//            dateOfBirth = updatedDoctor.dateOfBirth
-//            department = updatedDoctor.department
-//        }
-        doctorDB.updateDoctor(id.toInt(),updatedDoctor)
+        if(doctorDB.doctorExists(id.toInt())) {
+            doctorDB.updateDoctor(id.toInt(),updatedDoctor)
+        } else {
+            throw DoctorNotFoundException(id)
+        }
+
+
         return true
     }
 
