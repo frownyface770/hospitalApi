@@ -1,11 +1,12 @@
 package com.example.routes
+import com.example.exceptions.*
 import com.example.models.*
 import io.ktor.server.application.*
 import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlin.reflect.full.memberProperties
+
 
 class PatientRoutes {
     //Initializes the patient Database, will be replaced by an actual database, maybe...
@@ -28,13 +29,16 @@ class PatientRoutes {
 //                return@post call.respondText ( "Please provide all the required information.", status=HttpStatusCode.NotAcceptable )
 //            }
             try {
-                val addSuccess = patientService.addPatient(patient)
+                patientService.addPatient(patient)
                 //Adds the patient details and stores the boolean value of operation's success
                 //Checks if successful and acts accordingly
-                if (addSuccess) {
-                    call.respondText("Patient stored corretly", status = HttpStatusCode.Created)
-                } else {
+
+                call.respondText("Patient stored corretly", status = HttpStatusCode.Created)
+            } catch (e: ServiceException) {
+                if (e.originalException is PatientAlreadyExistsException) {
                     call.respondText("Patient already exists", status = HttpStatusCode.Conflict)
+                } else {
+                    call.respondText("Error creating patient ${e.message}", status = HttpStatusCode.InternalServerError)
                 }
             } catch (e: Exception) {
                 call.respondText("Error creating patient ${e.message}", status = HttpStatusCode.InternalServerError)
@@ -49,11 +53,11 @@ class PatientRoutes {
             try {
                 val patientStorage = patientService.getPatients()
                 //Check if patients exist and respond accordingly
-                if (patientStorage.isNotEmpty()) {
+                //if (patientStorage.isNotEmpty()) {
                     call.respond(patientStorage)
-                } else {
-                    call.respondText("No patients found", status = HttpStatusCode.OK)
-                }
+//                } else {
+//                    call.respondText("No patients found", status = HttpStatusCode.OK)
+//                }
             } catch (e: Exception) {
                 call.respondText("Error retrieving patients. ${e.message}", status = HttpStatusCode.InternalServerError)
             }
@@ -73,12 +77,12 @@ class PatientRoutes {
             )
             //Updates the patient details and stores the boolean value of operation's success
             try {
-                val success = patientService.updatePatientDetails(id,updatedPatient)
-                if (success) {
-                    call.respondText("Patient with $id information updated succesfully", status = HttpStatusCode.OK)
-                } else {
-                    call.respondText("Patient with $id Not Found", status = HttpStatusCode.NotFound)
-                }
+                patientService.updatePatientDetails(id,updatedPatient)
+
+                call.respondText("Patient with $id information updated succesfully", status = HttpStatusCode.OK)
+
+            } catch (e: PatientNotFoundException) {
+                call.respondText("Patient with $id Not Found", status = HttpStatusCode.NotFound)
             } catch (e: Exception) {
                 call.respondText("Error updating patient: ${e.message}", status = HttpStatusCode.InternalServerError)
             }
@@ -93,12 +97,13 @@ class PatientRoutes {
                 status = HttpStatusCode.BadRequest
             )
             try {
-                val deletionResult = patientService.deletePatient(idToDelete)
-                if (deletionResult) {
-                    call.respondText("Patient with ID $idToDelete deleted successfully", status = HttpStatusCode.OK)
-                } else {
-                    call.respondText("Patient with ID $idToDelete NOT FOUND", status = HttpStatusCode.NotFound)
-                }
+                patientService.deletePatient(idToDelete)
+
+                call.respondText("Patient with ID $idToDelete deleted successfully", status = HttpStatusCode.OK)
+
+            } catch (e: PatientNotFoundException) {
+                call.respondText("Patient with ID $idToDelete NOT FOUND", status = HttpStatusCode.NotFound)
+
             } catch (e: Exception) {
                 call.respondText("Error deleting patient: ${e.message}",status = HttpStatusCode.InternalServerError)
             }

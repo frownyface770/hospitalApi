@@ -1,6 +1,6 @@
 package com.example.models
 
-
+import com.example.exceptions.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -9,18 +9,16 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 
-
 @Serializable
 class Patient(
     val id: String = "10",
-    internal var name :Name,
+    internal var name: Name,
     internal var age: Int,
     internal var email: String? = "",
-    internal var gender: Gender= Gender.NONE,
-    internal var dateOfBirth:String = "",
-    internal var nationalHealthNumber:String)
-
-
+    internal var gender: Gender = Gender.NONE,
+    internal var dateOfBirth: String = "",
+    internal var nationalHealthNumber: String
+)
 
 //Class replacing the database for now
 class PatientDB {
@@ -29,23 +27,19 @@ class PatientDB {
             SchemaUtils.create(Patients)
         }
     }
+
     fun getPatientById(id: String): Patient? {
         //Finds the patient by id
-        try {
-            return transaction {
-                Patients.select { Patients.id eq id.toInt() }.map { rowToPatient(it) }.singleOrNull()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        return transaction {
+            Patients.select { Patients.id eq id.toInt() }.map { rowToPatient(it) }.singleOrNull()
         }
-        return null
     }
 
     //If list returned from db is empty, return false
     fun patientExists(id: Int): Boolean {
         try {
             return transaction {
-                !Patients.select { Patients.id eq id}.empty()
+                !Patients.select { Patients.id eq id }.empty()
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -54,12 +48,9 @@ class PatientDB {
     }
 
     fun updatePatient(patient: Patient) {
-        //Improvement
-        //Make it only changes values that actually need changing and
-        //Doesn't require all the values.
         try {
             transaction {
-                Patients.update({ Patients.id eq patient.id.toInt()}) {
+                Patients.update({ Patients.id eq patient.id.toInt() }) {
                     it[firstName] = patient.name.firstName
                     it[lastName] = patient.name.lastName
                     it[age] = patient.age
@@ -69,29 +60,33 @@ class PatientDB {
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            println("Error updating patient: ${e.message}")
+            throw e
         }
-
     }
 
     //Returns a list of the patients or an empty list if something happens
-    //NEEDS REFACTORING, WE SHOULD ALLOW EMPTY LIST RETURN AND NOT CONFUSE IT WITH EXCEPTION HANDLING
-    fun getPatients():List<Patient>? {
-        try {
-            return transaction {
-                Patients.selectAll().map { rowToPatient(it) }
+    fun getPatients(): List<Patient> {
+//        try {
+        return transaction {
+            Patients.selectAll().map { rowToPatient(it) }
 
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return null
         }
+//        } catch (e: Exception) {
+//            e.printStackTrace()
+//            return emptyList()
+//        }
 
     }
 
-    fun addPatient(patient: Patient):Boolean {
-        try {
-            transaction {
+    fun addPatient(patient: Patient) {
+
+        transaction {
+            if (patientExists(patient.id.toInt())) {
+                throw PatientAlreadyExistsException(patient.id)
+            }
+
+            try {
                 Patients.insert {
                     it[firstName] = patient.name.firstName
                     it[lastName] = patient.name.lastName
@@ -101,30 +96,28 @@ class PatientDB {
                     it[dateOfBirth] = patient.dateOfBirth
                     it[nationalHealthNumber] = patient.nationalHealthNumber
                 }
+            } catch (e: Exception) {
+                println("Error inserting patient: ${e.message}")
+                throw e
             }
-            return true
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
         }
-
     }
+
     fun deletePatient(idToDelete: String) {
         try {
             transaction {
                 Patients.deleteWhere { Patients.id eq idToDelete.toInt() }
                 println("Patient with ID $idToDelete deleted successfully.")
             }
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             println("Error deleting patient with ID $idToDelete: ${e.message}")
             e.printStackTrace()
         }
-
     }
 
 
     //Helper function
-    private fun rowToPatient(row : ResultRow) : Patient {
+    private fun rowToPatient(row: ResultRow): Patient {
         return Patient(
             id = row[Patients.id].toString(),
             name = Name(row[Patients.firstName], row[Patients.lastName]),
@@ -144,8 +137,8 @@ class PatientDB {
 //Routing does handle the client requests and passes them on to the service layer.
 //Seems to be the common architecture these days as I understand it
 class PatientService(private val patientDB: PatientDB) {
-    fun updatePatientDetails(id:String, updatedPatient: Patient): Boolean {
-        val existingPatient = patientDB.getPatientById(id) ?: return false
+    fun updatePatientDetails(id: String, updatedPatient: Patient) {
+        val existingPatient = patientDB.getPatientById(id) ?: throw PatientNotFoundException(id)
         //Updates the existing patient information with the one received.
         existingPatient.apply {
             name = Name(
@@ -158,23 +151,26 @@ class PatientService(private val patientDB: PatientDB) {
             dateOfBirth = updatedPatient.dateOfBirth
         }
         patientDB.updatePatient(existingPatient)
-        return true
     }
 
     fun getPatients(): List<Patient> {
-        return patientDB.getPatients() ?: throw Exception("Database error")
-    }
-    fun addPatient(newPatient: Patient): Boolean {
-        val success = patientDB.addPatient(newPatient)
-        return success
+        return patientDB.getPatients()
     }
 
-    fun deletePatient(id: String):Boolean {
+    fun addPatient(newPatient: Patient) {
+        try {
+            patientDB.addPatient(newPatient)
+        } catch (e: PatientAlreadyExistsException) {
+            println(e.message)
+            throw ServiceException(e.message, e)
+        }
+    }
+
+    fun deletePatient(id: String) {
         if (patientDB.patientExists(id.toInt())) {
             patientDB.deletePatient(id)
-        return true
         } else {
-            return false
+            throw PatientNotFoundException(id)
         }
     }
 }
