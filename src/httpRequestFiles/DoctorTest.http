@@ -68,7 +68,7 @@ GET http://localhost:8080/doctor
 Content-Type: application/json
 
 ###
-GET http://localhost:8080/doctor/availableHours/1/13-04-2024
+GET http://localhost:8080/doctor/availableHours/1/08-05-2024
 Content-Type: application/json
 
 ###
@@ -100,3 +100,19 @@ Content-Type: application/json
 
 ####
 GET http://localhost:8080/doctor/printSchedule/1/17-04-2024
+
+###
+POST http://localhost:8080/doctor/5/updateInfo
+Content-Type: application/json
+
+{
+  "name": {
+    "firstName": "Dr.Strange",
+    "lastName": "DarkOne"
+  },
+  "age": 34,
+  "email": "brainfiddler@brains.com",
+  "gender": "MALE",
+  "dateOfBirth": "1998-01-01",
+  "department": "Neurology"
+}

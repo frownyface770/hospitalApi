@@ -225,7 +225,20 @@ Content-Type: application/json
   "gender": "MALE",
   "nationalHealthNumber": 987654321
 }
+###
+POST http://127.0.0.1:8080/patients/5/updateInfo
+Content-Type: application/json
 
+{
+"name": {
+"firstName": "John",
+"lastName": "Wick"
+},
+"age": 45,
+"email": "bullets4everyone@edgy.com",
+"gender": "MALE",
+"nationalHealthNumber": 156534687
+}
 ###
 //Delete patient with id
 ###

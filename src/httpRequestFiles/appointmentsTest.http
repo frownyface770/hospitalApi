@@ -353,14 +353,14 @@ Content-Type: application/json
 
 
 ###
-PUT http://127.0.0.1:8080/appointment/updateAppointment/54
+PUT http://127.0.0.1:8080/appointment/updateAppointment/53
 Content-Type: application/json
 
 {
   "date":"13-05-2024",
-  "patientID": 4,
-  "time": "13:00",
-  "doctorID": 5,
+  "patientID": 1,
+  "time": "14:00",
+  "doctorID": 3,
   "patientComments": "Feeling a bit dizzy lately, need some advice."
 }
 ###

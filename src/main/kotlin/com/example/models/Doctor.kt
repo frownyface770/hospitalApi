@@ -10,14 +10,13 @@ import java.time.LocalTime
 
 @Serializable
 class Doctor(
-    //Must change the id generation, its 128 bits and that is too long
     val id: Int = 1,
-    internal var name :Name,
-    internal var age: Int,
-    internal var email: String? = "",
-    internal var gender: Gender= Gender.NONE,
-    internal var dateOfBirth:String = "",
-    internal var department: String = ""){
+    internal val name :Name,
+    internal val age: Int,
+    internal val email: String? = "",
+    internal val gender: Gender= Gender.NONE,
+    internal val dateOfBirth:String = "",
+    internal val department: String = ""){
     //Lets assume all doctors work the same schedule
     val workingHours = listOf(Pair("08:00","12:00"),Pair("13:00","18:00"))
 }
@@ -54,13 +53,13 @@ class DoctorDB {
     }
 
 
-    fun updateDoctor(doctor: Doctor) {
+    fun updateDoctor(id:Int,doctor: Doctor) {
         //Improvement
         //Make it only changes values that actually need changing and
         //Doesn't require all the values.
         try {
             transaction {
-                Doctors.update({Doctors.id eq doctor.id}) {
+                Doctors.update({Doctors.id eq id}) {
                     it[firstName] = doctor.name.firstName
                     it[lastName] = doctor.name.lastName
                     it[age] = doctor.age
@@ -133,9 +132,10 @@ class DoctorDB {
             age = row[Doctors.age],
             email = row[Doctors.email],
             gender = row[Doctors.gender],
-            dateOfBirth = row[Doctors.dateOfBirth]
+            dateOfBirth = row[Doctors.dateOfBirth],
+            department = row[Doctors.department]
         )
-        doctorToReturn.department = row[Doctors.department]
+
         return doctorToReturn
     }
     //Fetches appointments for the doctor
@@ -173,18 +173,18 @@ class DoctorService(private val doctorDB: DoctorDB) {
     fun updateDoctorDetails(id:String, updatedDoctor: Doctor): Boolean {
         val existingDoctor = doctorDB.getDoctorById(id) ?: return false
         //Updates the existing doctor information with the one received.
-        existingDoctor.apply {
-            name = Name(
-                firstName = updatedDoctor.name.firstName,
-                lastName = updatedDoctor.name.lastName
-            )
-            age = updatedDoctor.age
-            email = updatedDoctor.email
-            gender = updatedDoctor.gender
-            dateOfBirth = updatedDoctor.dateOfBirth
-            department = updatedDoctor.department
-        }
-        doctorDB.updateDoctor(existingDoctor)
+//        existingDoctor.apply {
+//            name = Name(
+//                firstName = updatedDoctor.name.firstName,
+//                lastName = updatedDoctor.name.lastName
+//            )
+//            age = updatedDoctor.age
+//            email = updatedDoctor.email
+//            gender = updatedDoctor.gender
+//            dateOfBirth = updatedDoctor.dateOfBirth
+//            department = updatedDoctor.department
+//        }
+        doctorDB.updateDoctor(id.toInt(),updatedDoctor)
         return true
     }
 

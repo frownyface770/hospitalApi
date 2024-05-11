@@ -11,11 +11,11 @@ import java.util.Date
 @Serializable
 class Appointment(
     val id: Int = 1,
-    var date: String,
-    var time: String,
-    var patientID: Int,
-    var doctorID: Int,
-    var patientComments: String)
+    val date: String,
+    val time: String,
+    val patientID: Int,
+    val doctorID: Int,
+    val patientComments: String)
 
 class AppointmentDB {
     init {
@@ -75,10 +75,10 @@ class AppointmentDB {
            // return false
         }
     }
-     fun updateAppointment(updatedAppointment: Appointment) {
+     fun updateAppointment(id:Int,updatedAppointment: Appointment) {
         try {
             transaction {
-                Appointments.update({ Appointments.id eq updatedAppointment.id }) {
+                Appointments.update({ Appointments.id eq id }) {
                     it[date] = updatedAppointment.date
                     it[time] = updatedAppointment.time
                     it[patientID] = updatedAppointment.patientID
@@ -126,15 +126,18 @@ class AppointmentService(private val appointmentDB: AppointmentDB) {
     }
 
     fun updateAppointment(id:String,updatedAppointment: Appointment) {
-        val existingAppointment = appointmentDB.getAppointmentById(id.toInt()) ?: throw AppointmentNotFoundException(id)
-        existingAppointment.apply {
-            existingAppointment.date = updatedAppointment.date
-            existingAppointment.time = updatedAppointment.date
-            existingAppointment.doctorID = updatedAppointment.doctorID
-            existingAppointment.patientID = updatedAppointment.patientID
-            existingAppointment.patientComments = updatedAppointment.patientComments
+        if ( appointmentDB.appointmentExists(id.toInt()) ) {
+            appointmentDB.updateAppointment(id.toInt(),updatedAppointment)
+        } else {
+             throw AppointmentNotFoundException(id)
         }
-        appointmentDB.updateAppointment(updatedAppointment)
+//        existingAppointment.apply {
+//            existingAppointment.date = updatedAppointment.date
+//            existingAppointment.time = updatedAppointment.date
+//            existingAppointment.doctorID = updatedAppointment.doctorID
+//            existingAppointment.patientID = updatedAppointment.patientID
+//            existingAppointment.patientComments = updatedAppointment.patientComments
+//        }
 
     }
 
@@ -147,6 +150,7 @@ class AppointmentService(private val appointmentDB: AppointmentDB) {
         }
 
     }
+
 
 }
 

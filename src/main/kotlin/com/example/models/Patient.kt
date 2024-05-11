@@ -12,12 +12,12 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @Serializable
 class Patient(
     val id: String = "10",
-    internal var name: Name,
-    internal var age: Int,
-    internal var email: String? = "",
-    internal var gender: Gender = Gender.NONE,
-    internal var dateOfBirth: String = "",
-    internal var nationalHealthNumber: String
+    internal val name: Name,
+    internal val age: Int,
+    internal val email: String? = "",
+    internal val gender: Gender = Gender.NONE,
+    internal val dateOfBirth: String = "",
+    internal val nationalHealthNumber: String
 )
 
 //Class replacing the database for now
@@ -47,10 +47,10 @@ class PatientDB {
         }
     }
 
-    fun updatePatient(patient: Patient) {
+    fun updatePatient(id: Int, patient: Patient) {
         try {
             transaction {
-                Patients.update({ Patients.id eq patient.id.toInt() }) {
+                Patients.update({ Patients.id eq id }) {
                     it[firstName] = patient.name.firstName
                     it[lastName] = patient.name.lastName
                     it[age] = patient.age
@@ -107,7 +107,6 @@ class PatientDB {
         try {
             transaction {
                 Patients.deleteWhere { Patients.id eq idToDelete.toInt() }
-                println("Patient with ID $idToDelete deleted successfully.")
             }
         } catch (e: Exception) {
             println("Error deleting patient with ID $idToDelete: ${e.message}")
@@ -138,19 +137,12 @@ class PatientDB {
 //Seems to be the common architecture these days as I understand it
 class PatientService(private val patientDB: PatientDB) {
     fun updatePatientDetails(id: String, updatedPatient: Patient) {
-        val existingPatient = patientDB.getPatientById(id) ?: throw PatientNotFoundException(id)
-        //Updates the existing patient information with the one received.
-        existingPatient.apply {
-            name = Name(
-                firstName = updatedPatient.name.firstName,
-                lastName = updatedPatient.name.lastName
-            )
-            age = updatedPatient.age
-            email = updatedPatient.email
-            gender = updatedPatient.gender
-            dateOfBirth = updatedPatient.dateOfBirth
+        if (patientDB.patientExists(id.toInt())) {
+            patientDB.updatePatient(id.toInt(), updatedPatient)
+        } else {
+            throw PatientNotFoundException(id)
         }
-        patientDB.updatePatient(existingPatient)
+
     }
 
     fun getPatients(): List<Patient> {
