@@ -31,12 +31,16 @@ class AppointmentRoutes {
             try {
                  appointmentService.addAppointment(appointment)
 
-
                 call.respondText("Appointment stored correctly", status = HttpStatusCode.Created)
 
             } catch (e: AppointmentAlreadyExistsException) {
-                call.respondText("Appointment already exists", status= HttpStatusCode.Conflict)
-            } catch (e: Exception) {
+                call.respondText("${e.message}", status= HttpStatusCode.Conflict)
+            }catch (e: InvalidDateException) {
+                call.respondText("${e.message}", status = HttpStatusCode.BadRequest)
+            }catch (e: InvalidTimeException) {
+                call.respondText("${e.message}", status = HttpStatusCode.BadRequest)
+            }
+            catch (e: Exception) {
                 call.respondText("Error creating appointment. ${e.message}", status = HttpStatusCode.InternalServerError)
             }
         }
@@ -70,6 +74,10 @@ class AppointmentRoutes {
                 call.respondText("Appointment updated correctly", status = HttpStatusCode.OK)
             } catch (e: AppointmentNotFoundException) {
                 call.respondText("${e.message}", status = HttpStatusCode.NotFound)
+            }catch (e: InvalidDateException) {
+                call.respondText("${e.message}", status = HttpStatusCode.BadRequest)
+            }catch (e: InvalidTimeException) {
+                call.respondText("${e.message}", status = HttpStatusCode.BadRequest)
             } catch (e: Exception) {
                 call.respondText("Error updating appointment. ${e.message}", status = HttpStatusCode.InternalServerError)
             }

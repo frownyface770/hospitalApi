@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 import java.util.Date
 
@@ -42,7 +45,6 @@ class AppointmentDB {
         } catch (e: Exception) {
             e.printStackTrace()
             throw e
-
         }
     }
     fun appointmentExists(id: Int): Boolean {
@@ -122,23 +124,25 @@ class AppointmentService(private val appointmentDB: AppointmentDB) {
     }
 
     fun addAppointment(newAppointment: Appointment) {
+        if (!Validation.isValidDate(newAppointment.date)) {
+            throw InvalidDateException(newAppointment.date)
+        } else if (!Validation.isValidTime(newAppointment.time)) {
+            throw InvalidTimeException(newAppointment.time)
+        }
         appointmentDB.addAppointment(newAppointment)
     }
 
     fun updateAppointment(id:String,updatedAppointment: Appointment) {
         if ( appointmentDB.appointmentExists(id.toInt()) ) {
+            if (!Validation.isValidDate(updatedAppointment.date)) {
+                throw InvalidDateException(updatedAppointment.date)
+            } else if (!Validation.isValidTime(updatedAppointment.time)) {
+                throw InvalidTimeException(updatedAppointment.time)
+            }
             appointmentDB.updateAppointment(id.toInt(),updatedAppointment)
         } else {
              throw AppointmentNotFoundException(id)
         }
-//        existingAppointment.apply {
-//            existingAppointment.date = updatedAppointment.date
-//            existingAppointment.time = updatedAppointment.date
-//            existingAppointment.doctorID = updatedAppointment.doctorID
-//            existingAppointment.patientID = updatedAppointment.patientID
-//            existingAppointment.patientComments = updatedAppointment.patientComments
-//        }
-
     }
 
     fun deleteAppointment(idRaw:String) {
