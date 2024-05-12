@@ -5,6 +5,7 @@ import io.ktor.http.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import com.example.exceptions.*
 class DoctorRoutes {
     //Initializes the doctor Database, will be replaced by an actual database, maybe...
     private val doctorDB = DoctorDB()
@@ -28,14 +29,14 @@ class DoctorRoutes {
             //Probably not.
             //val addSuccess = doctorService.addDoctor(doctor)
             try {
-                val addSuccess = doctorService.addDoctor(doctor)
+                doctorService.addDoctor(doctor)
                 //Adds the doctor details and stores the boolean value of operation's success
                 //Checks if successful and acts accordingly
-                if (addSuccess) {
-                    call.respondText("Doctor stored corretly", status = HttpStatusCode.Created)
-                } else {
-                    call.respondText("Doctor already exists", status = HttpStatusCode.Conflict)
-                }
+
+                call.respondText("Doctor stored corretly", status = HttpStatusCode.Created)
+//
+//                    call.respondText("Doctor already exists", status = HttpStatusCode.Conflict)
+
             } catch (e: Exception) {
                 call.respondText("Error creating doctor ${e.message}", status = HttpStatusCode.InternalServerError)
             }
@@ -49,11 +50,11 @@ class DoctorRoutes {
             try {
                 val doctorStorage = doctorService.getDoctor()
                 //Check if doctor exist and respond accordingly
-                if (doctorStorage.isNotEmpty()) {
+//                if (doctorStorage.isNotEmpty()) {
                     call.respond(doctorStorage)
-                } else {
-                    call.respondText("No doctor found", status = HttpStatusCode.OK)
-                }
+//                } else {
+//                    call.respondText("No doctor found", status = HttpStatusCode.OK)
+//                }
             } catch (e: Exception) {
                 call.respondText("Error retrieving doctors ${e.message}", status = HttpStatusCode.InternalServerError)
             }
@@ -73,12 +74,12 @@ class DoctorRoutes {
             )
             //Updates the doctor details and stores the boolean value of operation's success
             try {
-                val success = doctorService.updateDoctorDetails(id,updatedDoctor)
-                if (success) {
-                    call.respondText("Doctor with $id information updated succesfully", status = HttpStatusCode.OK)
-                } else {
-                    call.respondText("Doctor with $id Not Found", status = HttpStatusCode.NotFound)
-                }
+                doctorService.updateDoctorDetails(id,updatedDoctor)
+
+                call.respondText("Doctor with $id information updated succesfully", status = HttpStatusCode.OK)
+            } catch (e: DoctorNotFoundException) {
+                call.respondText("${e.message}", status = HttpStatusCode.NotFound)
+
             } catch (e: Exception) {
                 call.respondText("Error updating patient: ${e.message}", status = HttpStatusCode.InternalServerError)
             }
@@ -93,12 +94,12 @@ class DoctorRoutes {
                 status = HttpStatusCode.BadRequest
             )
             try {
-                val deletionResult = doctorService.deleteDoctor(idToDelete)
-                if (deletionResult) {
-                    call.respondText("Doctor with ID $idToDelete deleted successfully", status = HttpStatusCode.OK)
-                } else {
-                    call.respondText("Doctor with ID $idToDelete NOT FOUND", status = HttpStatusCode.NotFound)
-                }
+                doctorService.deleteDoctor(idToDelete)
+
+                call.respondText("Doctor with ID $idToDelete deleted successfully", status = HttpStatusCode.OK)
+            } catch (e: DoctorNotFoundException) {
+                call.respondText("${e.message}", status = HttpStatusCode.NotFound)
+
             } catch (e: Exception) {
                 call.respondText("Error deleting doctor: ${e.message}",status = HttpStatusCode.InternalServerError)
             }
@@ -113,7 +114,15 @@ class DoctorRoutes {
             )
             val day = call.parameters["day"] ?: return@get call.respondText ("Bad request",
                 status = HttpStatusCode.BadRequest  )
-            call.respond(doctorService.availableHours(id,day))
+            try {
+                val docHours = doctorService.availableHours(id, day)
+                call.respond(docHours)
+            } catch (e: InvalidDateException) {
+                call.respondText("${e.message}", status = HttpStatusCode.BadRequest)
+            } catch (e: Exception) {
+                call.respondText("Error retrieving available hours ${e.message}", status = HttpStatusCode.InternalServerError)
+            }
+
         }
     }
 
@@ -122,8 +131,16 @@ class DoctorRoutes {
             val id = call.parameters["id"] ?: return@get call.respondText("Bad request", status = HttpStatusCode.BadRequest)
             val startDate = call.parameters["startDate"] ?: return@get call.respondText ("Bad request",
                 status = HttpStatusCode.BadRequest  )
-            val docPath = doctorService.printSchedule(id,startDate)
-            call.respondText("Path: $docPath")
+            try {
+                val docPath = doctorService.printSchedule(id,startDate)
+                call.respondText("Path: $docPath")
+            } catch (e: InvalidDateException) {
+                call.respondText("${e.message}", status = HttpStatusCode.BadRequest)
+            }
+            catch (e: Exception) {
+                call.respondText("Error retrieving schedule ${e.message}", status = HttpStatusCode.InternalServerError)
+            }
+
         }
     }
 }

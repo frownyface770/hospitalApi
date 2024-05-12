@@ -36,7 +36,7 @@ class PatientRoutes {
                 call.respondText("Patient stored corretly", status = HttpStatusCode.Created)
             } catch (e: ServiceException) {
                 if (e.originalException is PatientAlreadyExistsException) {
-                    call.respondText("Patient already exists", status = HttpStatusCode.Conflict)
+                    call.respondText("${e.originalException.message}", status = HttpStatusCode.Conflict)
                 } else {
                     call.respondText("Error creating patient ${e.message}", status = HttpStatusCode.InternalServerError)
                 }
@@ -82,7 +82,7 @@ class PatientRoutes {
                 call.respondText("Patient with $id information updated succesfully", status = HttpStatusCode.OK)
 
             } catch (e: PatientNotFoundException) {
-                call.respondText("Patient with $id Not Found", status = HttpStatusCode.NotFound)
+                call.respondText("${e.message}", status = HttpStatusCode.NotFound)
             } catch (e: Exception) {
                 call.respondText("Error updating patient: ${e.message}", status = HttpStatusCode.InternalServerError)
             }
@@ -102,7 +102,7 @@ class PatientRoutes {
                 call.respondText("Patient with ID $idToDelete deleted successfully", status = HttpStatusCode.OK)
 
             } catch (e: PatientNotFoundException) {
-                call.respondText("Patient with ID $idToDelete NOT FOUND", status = HttpStatusCode.NotFound)
+                call.respondText("${e.message}", status = HttpStatusCode.NotFound)
 
             } catch (e: Exception) {
                 call.respondText("Error deleting patient: ${e.message}",status = HttpStatusCode.InternalServerError)

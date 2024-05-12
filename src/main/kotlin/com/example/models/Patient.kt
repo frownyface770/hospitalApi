@@ -85,7 +85,6 @@ class PatientDB {
             if (patientExists(patient.id.toInt())) {
                 throw PatientAlreadyExistsException(patient.id)
             }
-
             try {
                 Patients.insert {
                     it[firstName] = patient.name.firstName

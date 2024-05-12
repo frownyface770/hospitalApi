@@ -55,9 +55,7 @@ class DoctorDB {
 
 
     fun updateDoctor(id:Int,doctor: Doctor) {
-        //Improvement
-        //Make it only changes values that actually need changing and
-        //Doesn't require all the values.
+
         try {
             transaction {
                 Doctors.update({Doctors.id eq id}) {
@@ -72,12 +70,13 @@ class DoctorDB {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            throw e
         }
 
     }
 
-    //Returns a list of the patients or an empty list if something happens
-    //NEEDS REFACTORING, WE SHOULD ALLOW EMPTY LIST RETURN AND NOT CONFUSE IT WITH EXCEPTION HANDLING
+    //Returns a list of the doctors
+
     fun getDoctor():List<Doctor> {
         try {
             return transaction {
@@ -85,12 +84,12 @@ class DoctorDB {
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            return emptyList()
+            throw e
         }
 
     }
 
-    fun addDoctor(doctor: Doctor):Boolean {
+    fun addDoctor(doctor: Doctor){
         try {
             transaction {
                 Doctors.insert {
@@ -103,10 +102,9 @@ class DoctorDB {
                     it[department] = doctor.department
                 }
             }
-            return true
         } catch (e: Exception) {
             e.printStackTrace()
-            return false
+            throw e
         }
 
     }
@@ -119,6 +117,7 @@ class DoctorDB {
         } catch (e:Exception) {
             println("Error deleting doctor with ID $idToDelete: ${e.message}")
             e.printStackTrace()
+            throw e
         }
 
     }
@@ -154,13 +153,19 @@ class DoctorDB {
              } }
          } catch (e: Exception) {
              e.printStackTrace()
+             throw e
          }
-        return emptyList()
     }
     //Fetches the working hours for the doctor
     internal fun fetchWorkingHours(docId: String):List<Pair<String, String>> {
-        val doctor = transaction { Doctors.select { Doctors.id eq docId.toInt() }.first() }
-        return rowToDoctor(doctor).workingHours
+        try {
+            val doctor = transaction { Doctors.select { Doctors.id eq docId.toInt() }.first() }
+            return rowToDoctor(doctor).workingHours
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+
     }
 
 }
@@ -171,42 +176,39 @@ class DoctorDB {
 //Routing does handle the client requests and passes them on to the service layer.
 //Seems to be the common architecture these days as I understand it
 class DoctorService(private val doctorDB: DoctorDB) {
-    fun updateDoctorDetails(id:String, updatedDoctor: Doctor): Boolean {
+    fun updateDoctorDetails(id:String, updatedDoctor: Doctor) {
         if(doctorDB.doctorExists(id.toInt())) {
             doctorDB.updateDoctor(id.toInt(),updatedDoctor)
         } else {
             throw DoctorNotFoundException(id)
         }
 
-
-        return true
+//
+//        return true
     }
 
     fun getDoctor(): List<Doctor> {
         return doctorDB.getDoctor()
     }
-    fun addDoctor(newDoctor: Doctor): Boolean {
-        val success = doctorDB.addDoctor(newDoctor)
-        if (success) {
-            println("It worked!!!!!")
-            return success
-        } else {
-            println("Didnt work, service layer")
-            return success
-        }
+    fun addDoctor(newDoctor: Doctor) {
+        doctorDB.addDoctor(newDoctor)
     }
 
-    fun deleteDoctor(id: String):Boolean {
+    fun deleteDoctor(id: String) {
         if (doctorDB.doctorExists(id.toInt())) {
             doctorDB.deleteDoctor(id)
-            return true
         } else {
-            return false
+            throw DoctorNotFoundException(id)
         }
     }
     //Complicated function that returns the available hours for the given day and doctor. Assuming each appointment is an hour long.
     fun availableHours(id: String, date: String): List<String> {
         val today = LocalDate.now()
+
+        if (!Validation.isValidDate(date)) {
+            throw InvalidDateException(date)
+        }
+
         val dateToCheck = LocalDate.of(date.slice(6..9).toInt(),date.slice(3..4).toInt(),date.slice(0..1).toInt())
         if (dateToCheck.isBefore(today)) {
             return emptyList()
@@ -215,10 +217,18 @@ class DoctorService(private val doctorDB: DoctorDB) {
         val now = LocalTime.now()
         println("today: $today now $now")
         //Fetch the appointments for the day and doctor
-        val appointments = doctorDB.fetchAppointments(id).filter { it.date == date }
+        val appointments: List<Appointment>
+        val workingHours: List<Pair<String, String>>
+        try {
+            appointments = doctorDB.fetchAppointments(id).filter { it.date == date }
+            //Get the doctor's working hours, for now they are all the same but that can change in the future
+            workingHours = doctorDB.fetchWorkingHours(id).toMutableList()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+
         val availableSlots = mutableListOf<Int>()
-        //Get the doctor's working hours, for now they are all the same but that can change in the future
-        val workingHours = doctorDB.fetchWorkingHours(id).toMutableList()
 
         //For each workingHour pair(start time, end time) we have a list of 2 pairs.
         //Ex: Doctor starts at 8:00 and leaves at 12:00 for lunch returning at 13:00 and stays till 18:00.
@@ -247,6 +257,9 @@ class DoctorService(private val doctorDB: DoctorDB) {
     }
 
     fun printSchedule( id: String, startDate: String): String? {
+        if (!Validation.isValidDate(startDate)) {
+            throw InvalidDateException(startDate)
+        }
         val appointmentList = doctorDB.fetchAppointments(id)
         val doctor = doctorDB.getDoctorById(id)
         if (doctor != null) {
