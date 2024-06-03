@@ -1,5 +1,4 @@
 package com.example.models
-import io.ktor.server.engine.*
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -156,7 +155,7 @@ class MedicalInformationDB{
 //that comes from the database.
 class MedicalInformationService(private val medicalInformationDB:MedicalInformationDB){
     //this method of this class MedicalInformationService its used as a way to make the updateMedicalInformation work by id.
-    fun updateMedicalInformationData(id:Int,medicalInformationUpdated: MedicalInformation): Boolean {
+    fun updateMedicalInformationData(id: Int, medicalInformationUpdated: MedicalInformation): Boolean {
         val existingMedicalInformation = medicalInformationDB.getMedicalInformationById(id) ?: throw Exception("This MedicalInformation doesn't exist")
         existingMedicalInformation.apply {
             data = medicalInformationUpdated.data
