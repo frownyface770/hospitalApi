@@ -51,7 +51,28 @@ class MedicalInformationRoutes {
             }
         }
     }
-    
+    //function for get a list of the medical information
+    private fun Route.getMedicalInformation() {
+        get("/getMedicalInformation") {
+            try {
+                val medicalInformation = medicalInformationService.getMedicalInformation()
+                call.respondText("Medical information stored corretly", status = HttpStatusCode.OK)
+            }catch(e: Exception) {
+                call.respondText("Error retrieving medical information ${e.message}", status = HttpStatusCode.InternalServerError)
+            }
+        }
+    }
+    private fun Route.deleteMedicalInformation(id: Int) {
+        delete("/{id}deleteMedicalInformation"){
+            val medicalInformation = call.receive<MedicalInformation>()
+            try {
+                medicalInformationService.deleteMedicalInformation(id)
+                call.respondText("Medical information deleted successfully", status = HttpStatusCode.OK)
+            }catch(e: Exception) {
+                call.respondText("Error deleting medical information ${e.message}", status = HttpStatusCode.InternalServerError)
+            }
+        }
+    }
 
 
 }
