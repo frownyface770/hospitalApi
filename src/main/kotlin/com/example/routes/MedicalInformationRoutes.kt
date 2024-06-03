@@ -31,8 +31,9 @@ class MedicalInformationRoutes {
          }
      }
     //function for update medical information by id
-    private fun Route.updateMedicalInformation(id: Int) {
-        put("/{id?}updateMedicalInformation"){
+    private fun Route.updateMedicalInformation() {
+        put("/{id?}/updateMedicalInformation"){
+            val id = call.parameters["id"]
             val medicalInformation = call.receive<MedicalInformation>()
             try {
                 medicalInformationService.updateMedicalInformationData(id,medicalInformation)
@@ -43,8 +44,9 @@ class MedicalInformationRoutes {
         }
     }
     //function for update medical information by patient id
-    private fun Route.updateMedicalInformationPatient(patientId: Int) {
-        put("/{patientId}updateMedicalInformation"){
+    private fun Route.updateMedicalInformationPatient() {
+        put("/{patientId}/updateMedicalInformation"){
+            val patientId = call.parameters["patientId"]
             val medicalInformation = call.receive<MedicalInformation>()
             try {
                 medicalInformationService.updateMedicalInformationDataPatient(patientId,medicalInformation)
@@ -66,8 +68,9 @@ class MedicalInformationRoutes {
         }
     }
     //function to delete medical information
-    private fun Route.deleteMedicalInformation(id: Int) {
-        delete("/{id}deleteMedicalInformation"){
+    private fun Route.deleteMedicalInformation() {
+        delete("/{id}/deleteMedicalInformation"){
+            val id = call.parameters["id"]
             try {
                 medicalInformationService.deleteMedicalInformation(id)
                 call.respondText("Medical information deleted successfully", status = HttpStatusCode.OK)
