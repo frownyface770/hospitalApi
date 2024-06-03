@@ -33,10 +33,10 @@ class MedicalInformationRoutes {
     //function for update medical information by id
     private fun Route.updateMedicalInformation() {
         put("/{id?}/updateMedicalInformation"){
-            val id = call.parameters["id"]
+            val id = call.parameters["id"]?.toInt()
             val medicalInformation = call.receive<MedicalInformation>()
             try {
-                medicalInformationService.updateMedicalInformationData(id,medicalInformation)
+                medicalInformationService.updateMedicalInformationData(id!!,medicalInformation)
                 call.respondText("Medical information updated successfully", status = HttpStatusCode.OK)
             }catch(e: Exception) {
                 call.respondText("Error updating medical information ${e.message}", status = HttpStatusCode.InternalServerError)
@@ -46,10 +46,10 @@ class MedicalInformationRoutes {
     //function for update medical information by patient id
     private fun Route.updateMedicalInformationPatient() {
         put("/{patientId}/updateMedicalInformation"){
-            val patientId = call.parameters["patientId"]
+            val patientId = call.parameters["patientId"]?.toInt()
             val medicalInformation = call.receive<MedicalInformation>()
             try {
-                medicalInformationService.updateMedicalInformationDataPatient(patientId,medicalInformation)
+                medicalInformationService.updateMedicalInformationDataPatient(patientId!!,medicalInformation)
                 call.respondText("Medical information updated successfully", status = HttpStatusCode.OK)
             }catch(e: Exception) {
                 call.respondText("Error updating medical information ${e.message}", status = HttpStatusCode.InternalServerError)
@@ -60,8 +60,8 @@ class MedicalInformationRoutes {
     private fun Route.getMedicalInformation() {
         get("/getMedicalInformation") {
             try {
-                medicalInformationService.getMedicalInformation()
-                call.respondText("Medical information stored corretly", status = HttpStatusCode.OK)
+                val response = medicalInformationService.getMedicalInformation()
+                call.respond(response)
             }catch(e: Exception) {
                 call.respondText("Error retrieving medical information ${e.message}", status = HttpStatusCode.InternalServerError)
             }
@@ -70,9 +70,9 @@ class MedicalInformationRoutes {
     //function to delete medical information
     private fun Route.deleteMedicalInformation() {
         delete("/{id}/deleteMedicalInformation"){
-            val id = call.parameters["id"]
+            val id = call.parameters["id"]?.toInt()
             try {
-                medicalInformationService.deleteMedicalInformation(id)
+                medicalInformationService.deleteMedicalInformation(id!!)
                 call.respondText("Medical information deleted successfully", status = HttpStatusCode.OK)
             }catch(e: Exception) {
                 call.respondText("Error deleting medical information ${e.message}", status = HttpStatusCode.InternalServerError)

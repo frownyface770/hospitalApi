@@ -1,0 +1,15 @@
+###
+GET localhost:8080/medicalinformation/getMedicalInformation
+###
+POST localhost:8080/medicalinformation/createMedicalInformation
+Content-Type: application/json
+
+{
+  "patientId": 4,
+  "data": "03/06/2024",
+  "sintoms": "diarreia",
+  "diagnostic": "comeu coisas más",
+  "medication": "beber muita água",
+  "notes": "comeu algo que não devia, deve beber água."
+}
+###

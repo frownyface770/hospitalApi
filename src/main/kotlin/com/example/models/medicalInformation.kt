@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 @Serializable
 //this is the class that gets the info of the MedicalInformation
 class MedicalInformation(
-    val id:Int,
+    val id:Int =1,
     val patientId: Int,
     internal var data: String,
     internal var sintoms: String,
@@ -128,11 +128,12 @@ class MedicalInformationDB{
         return try {
             transaction{
                 MedicalInformations.insert{
-                    it[data] = MedicalInformations.data
-                    it[sintoms] = MedicalInformations.sintoms
-                    it[diagonostic] = MedicalInformations.diagonostic
-                    it[medication] = MedicalInformations.medication
-                    it[notes] = MedicalInformations.notes
+                    it[patientId] = medicalInformation.patientId
+                    it[data] = medicalInformation.data
+                    it[sintoms] = medicalInformation.sintoms
+                    it[diagonostic] = medicalInformation.diagnostic
+                    it[medication] = medicalInformation.medication
+                    it[notes] = medicalInformation.notes
                 }
             }
             true
