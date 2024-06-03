@@ -11,8 +11,11 @@ class MedicalInformationRoutes {
     private val medicalInformationService = MedicalInformationService(medicalInformationDB)
     fun setUpMedicalInformationRoutes(route: Route) {
         route.route("/medicalinformation") {
-            //Calls the functions that actually handle the routing
-
+            createMedicalInformation()
+            updateMedicalInformation()
+            updateMedicalInformationPatient()
+            getMedicalInformation()
+            deleteMedicalInformation()
         }
     }
     //function to create/add medical information
@@ -55,16 +58,16 @@ class MedicalInformationRoutes {
     private fun Route.getMedicalInformation() {
         get("/getMedicalInformation") {
             try {
-                val medicalInformation = medicalInformationService.getMedicalInformation()
+                medicalInformationService.getMedicalInformation()
                 call.respondText("Medical information stored corretly", status = HttpStatusCode.OK)
             }catch(e: Exception) {
                 call.respondText("Error retrieving medical information ${e.message}", status = HttpStatusCode.InternalServerError)
             }
         }
     }
+    //function to delete medical information
     private fun Route.deleteMedicalInformation(id: Int) {
         delete("/{id}deleteMedicalInformation"){
-            val medicalInformation = call.receive<MedicalInformation>()
             try {
                 medicalInformationService.deleteMedicalInformation(id)
                 call.respondText("Medical information deleted successfully", status = HttpStatusCode.OK)
@@ -73,6 +76,4 @@ class MedicalInformationRoutes {
             }
         }
     }
-
-
 }
