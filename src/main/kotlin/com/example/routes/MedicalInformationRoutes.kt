@@ -45,14 +45,13 @@ class MedicalInformationRoutes {
     }
     //function for update medical information by patient id
     private fun Route.updateMedicalInformationPatient() {
-        put("/{patientId}/updateMedicalInformation"){
-            val patientId = call.parameters["patientId"]?.toInt()
-            val medicalInformation = call.receive<MedicalInformation>()
+        get("/{patientId}/getMedicalInformation"){
+            val patientId = call.parameters["patientId"]?.toInt() ?: return@get call.respondText("Bad request", status = HttpStatusCode.BadRequest)
             try {
-                medicalInformationService.updateMedicalInformationDataPatient(patientId!!,medicalInformation)
-                call.respondText("Medical information updated successfully", status = HttpStatusCode.OK)
+                val response = medicalInformationService.getAllMedicalInformationByPatientId(patientId)
+                call.respond(response)
             }catch(e: Exception) {
-                call.respondText("Error updating medical information ${e.message}", status = HttpStatusCode.InternalServerError)
+                call.respondText("Error retrieving medical information ${e.message}", status = HttpStatusCode.InternalServerError)
             }
         }
     }

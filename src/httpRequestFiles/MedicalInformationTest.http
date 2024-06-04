@@ -7,9 +7,37 @@ Content-Type: application/json
 {
   "patientId": 4,
   "data": "03/06/2024",
+  "sintoms": "dor de cabeça",
+  "diagnostic": "está com dores de cabeça",
+  "medication": "beber muita água",
+  "notes": "bateu com a cabeça, deve beber água."
+}
+###
+PUT localhost:8080/medicalinformation/22/updateMedicalInformation
+Content-Type: application/json
+
+{
+  "patientId": 4,
+  "data": "03/06/2024",
+  "sintoms": "diarreia severa",
+  "diagnostic": "comeu coisas más",
+  "medication": "beber muita água e tomar algo",
+  "notes": "comeu algo que não devia, deve beber água."
+}
+###
+PUT localhost:8080/medicalinformation/4/updateMedicalInformation
+Content-Type: application/json
+
+{
+  "patientId": 4,
+  "data": "03/06/2024",
   "sintoms": "diarreia",
   "diagnostic": "comeu coisas más",
   "medication": "beber muita água",
   "notes": "comeu algo que não devia, deve beber água."
 }
+###
+DELETE localhost:8080/medicalinformation/22/deleteMedicalInformation
+###
+GET localhost:8080/medicalinformation/4/getMedicalInformation
 ###

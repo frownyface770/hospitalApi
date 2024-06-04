@@ -54,7 +54,7 @@ class MedicalInformationDB{
         }
     }
     //this function returns a view in a list format where the patientId is the filter
-    fun getMedicalInformationByPatientId(patientId: Int): MedicalInformation?{
+    fun getMedicalInformationByPatientId(patientId: Int): List<MedicalInformation>{
         try {
             return transaction{
                 MedicalInformations.select{
@@ -62,18 +62,18 @@ class MedicalInformationDB{
                 }
                     .mapNotNull{
                         rowToMedicalInformation(it)
-                    }.first()
+                    }
             }
         }catch (e: Exception){
             println("Error: ${e.message}")
-            return null
+            return emptyList()
         }
     }
     //this function works to return a value true or false
-    fun medicalInformationExists(patientId: Int): Boolean{
+    fun medicalInformationExists(id: Int): Boolean{
         try {
             return transaction{
-                !MedicalInformations.select{ MedicalInformations.patientId eq patientId}.empty()
+                !MedicalInformations.select{ MedicalInformations.id eq id}.empty()
             }
         }catch (e: Exception){
             println("Error: ${e.message}")
@@ -144,8 +144,9 @@ class MedicalInformationDB{
     }
     fun deleteMedicalInformation(idMed: Int){
         try {
+            println("idMed:$idMed")
             transaction {
-                MedicalInformations.deleteWhere { id eq idMed }
+                MedicalInformations.deleteWhere { MedicalInformations.id eq idMed }
             }
         }catch (e: Exception){
             println("Error: ${e.message}")
@@ -168,19 +169,11 @@ class MedicalInformationService(private val medicalInformationDB:MedicalInformat
         medicalInformationDB.updateMedicalInformation(existingMedicalInformation)
         return true
     }
-    //this method of this class MedicalInformationService its used as a way to make the updateMedicalInformation work by patientId.
-    fun updateMedicalInformationDataPatient(patientid:Int,medicalInformationUpdated: MedicalInformation): Boolean {
-        val existingInformation = medicalInformationDB.getMedicalInformationByPatientId(patientid) ?: throw Exception("This MedicalInformation doesn't exist")
-        existingInformation.apply {
-            data = medicalInformationUpdated.data
-            sintoms = medicalInformationUpdated.sintoms
-            diagnostic = medicalInformationUpdated.diagnostic
-            medication = medicalInformationUpdated.medication
-            notes = medicalInformationUpdated.notes
-        }
-        medicalInformationDB.updateMedicalInformationPatient(existingInformation)
-        return true
+    //function to return all medical information by patient id
+    fun getAllMedicalInformationByPatientId(patientId: Int): List<MedicalInformation>{
+        return medicalInformationDB.getMedicalInformationByPatientId(patientId)
     }
+
     //this method of this class MedicalInformationService its used as a way to make the getMedicalInformation work.
     fun getMedicalInformation(): List<MedicalInformation> {
         return medicalInformationDB.getMedicalInformations()
