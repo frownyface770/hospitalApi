@@ -1,5 +1,6 @@
 package com.example.routes
 import com.example.models.*
+import com.example.services.MedicalInformationService
 import io.ktor.server.application.*
 import io.ktor.http.*
 import io.ktor.server.request.*
@@ -32,11 +33,11 @@ class MedicalInformationRoutes {
      }
     //function for update medical information by id
     private fun Route.updateMedicalInformation() {
-        put("/{id?}/updateMedicalInformation"){
-            val id = call.parameters["id"]?.toInt()
+        put("/{id}/updateMedicalInformation"){
+            val id = call.parameters["id"]?.toInt() ?: return@put call.respond(HttpStatusCode.BadRequest)
             val medicalInformation = call.receive<MedicalInformation>()
             try {
-                medicalInformationService.updateMedicalInformationData(id!!,medicalInformation)
+                medicalInformationService.updateMedicalInformationData(id,medicalInformation)
                 call.respondText("Medical information updated successfully", status = HttpStatusCode.OK)
             }catch(e: Exception) {
                 call.respondText("Error updating medical information ${e.message}", status = HttpStatusCode.InternalServerError)
@@ -69,9 +70,9 @@ class MedicalInformationRoutes {
     //function to delete medical information
     private fun Route.deleteMedicalInformation() {
         delete("/{id}/deleteMedicalInformation"){
-            val id = call.parameters["id"]?.toInt()
+            val id = call.parameters["id"]?.toInt() ?: return@delete call.respond(HttpStatusCode.BadRequest)
             try {
-                medicalInformationService.deleteMedicalInformation(id!!)
+                medicalInformationService.deleteMedicalInformation(id)
                 call.respondText("Medical information deleted successfully", status = HttpStatusCode.OK)
             }catch(e: Exception) {
                 call.respondText("Error deleting medical information ${e.message}", status = HttpStatusCode.InternalServerError)

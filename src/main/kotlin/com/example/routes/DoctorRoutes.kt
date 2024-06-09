@@ -6,6 +6,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.example.exceptions.*
+import com.example.services.DoctorService
+
 class DoctorRoutes {
     //Initializes the doctor Database, will be replaced by an actual database, maybe...
     private val doctorDB = DoctorDB()
@@ -63,12 +65,12 @@ class DoctorRoutes {
     }
 
     private fun Route.updateDoctor() {
-        post("{id?}/updateInfo") {
+        put("{id?}/updateInfo") {
             //Get new doctor info from the POST request
             val updatedDoctor = call.receive<Doctor>()
 
             //Get the id from the url parameters, if it's not there we send a bad request http code back
-            val id = call.parameters["id"] ?: return@post call.respondText(
+            val id = call.parameters["id"] ?: return@put call.respondText(
                 "Bad request",
                 status = HttpStatusCode.BadRequest
             )

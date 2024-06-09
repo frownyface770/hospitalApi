@@ -212,7 +212,7 @@ Content-Type: application/json
 ###
 //Update Bob
 ###
-POST http://127.0.0.1:8080/patients/5/updateInfo
+PUT http://127.0.0.1:8080/patients/5/updateInfo
 Content-Type: application/json
 
 {
@@ -226,7 +226,7 @@ Content-Type: application/json
   "nationalHealthNumber": 987654321
 }
 ###
-POST http://127.0.0.1:8080/patients/5/updateInfo
+PUT http://127.0.0.1:8080/patients/5/updateInfo
 Content-Type: application/json
 
 {
@@ -243,5 +243,10 @@ Content-Type: application/json
 //Delete patient with id
 ###
 DELETE http://127.0.0.1:8080/patients/delete/14
+
+###
+GET http://127.0.0.1:8080/patients/5
+
+
 
 

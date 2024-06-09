@@ -1,6 +1,7 @@
 package com.example.routes
 import com.example.exceptions.*
 import com.example.models.*
+import com.example.services.PatientService
 import io.ktor.server.application.*
 import io.ktor.http.*
 import io.ktor.server.request.*
@@ -20,8 +21,12 @@ class PatientRoutes {
             createPatient()
             updatePatient()
             deletePatient()
+            getPatientById()
         }
     }
+
+
+
     private fun Route.createPatient() {
         post("/createPatient") {
             val patient = call.receive<Patient>()
@@ -52,26 +57,34 @@ class PatientRoutes {
             //Gets the patients from the service layer
             try {
                 val patientStorage = patientService.getPatients()
-                //Check if patients exist and respond accordingly
-                //if (patientStorage.isNotEmpty()) {
-                    call.respond(patientStorage)
-//                } else {
-//                    call.respondText("No patients found", status = HttpStatusCode.OK)
-//                }
+                call.respond(patientStorage)
             } catch (e: Exception) {
                 call.respondText("Error retrieving patients. ${e.message}", status = HttpStatusCode.InternalServerError)
             }
 
         }
     }
+    private fun Route.getPatientById() {
+        get("/{id}"){
+            val id = call.parameters["id"] ?: return@get call.respond(HttpStatusCode.BadRequest)
+            try {
+                val patient = patientService.getPatientById(id) ?: return@get call.respond(HttpStatusCode.NotFound)
+                call.respond(patient)
+            } catch (e: Exception) {
+                call.respondText("Error retrieving patient. ${e.message}", status = HttpStatusCode.InternalServerError)
+            }
+        }
+
+    }
+
 
     private fun Route.updatePatient() {
-        post("{id?}/updateInfo") {
+        put("{id?}/updateInfo") {
             //Get new patient info from the POST request
             val updatedPatient = call.receive<Patient>()
     println(updatedPatient)
             //Get the id from the url parameters, if it's not there we send a bad request http code back
-            val id = call.parameters["id"] ?: return@post call.respondText(
+            val id = call.parameters["id"] ?: return@put call.respondText(
                 "Bad request",
                 status = HttpStatusCode.BadRequest
             )

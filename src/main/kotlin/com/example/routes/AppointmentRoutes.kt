@@ -2,6 +2,7 @@ package com.example.routes
 
 import com.example.models.*
 import com.example.exceptions.*
+import com.example.services.AppointmentService
 import io.ktor.server.application.*
 import io.ktor.http.*
 import io.ktor.server.request.*
