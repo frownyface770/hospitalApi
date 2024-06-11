@@ -1,4 +1,5 @@
 package com.example.models
+import com.example.plugins.PdfGenerator
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils

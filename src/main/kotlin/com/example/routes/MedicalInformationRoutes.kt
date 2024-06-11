@@ -1,5 +1,6 @@
 package com.example.routes
 import com.example.models.*
+import com.example.plugins.PdfGenerator
 import com.example.services.MedicalInformationService
 import io.ktor.server.application.*
 import io.ktor.http.*
@@ -10,6 +11,7 @@ import io.ktor.server.routing.*
 class MedicalInformationRoutes {
     private val medicalInformationDB = MedicalInformationDB()
     private val medicalInformationService = MedicalInformationService(medicalInformationDB)
+    private val pdfGenerator = PdfGenerator("src/medicalinformation")
     fun setUpMedicalInformationRoutes(route: Route) {
         route.route("/medicalinformation") {
             createMedicalInformation()
@@ -17,6 +19,7 @@ class MedicalInformationRoutes {
             updateMedicalInformationPatient()
             getMedicalInformation()
             deleteMedicalInformation()
+            genePdf()
         }
     }
     //function to create/add medical information
@@ -76,6 +79,17 @@ class MedicalInformationRoutes {
                 call.respondText("Medical information deleted successfully", status = HttpStatusCode.OK)
             }catch(e: Exception) {
                 call.respondText("Error deleting medical information ${e.message}", status = HttpStatusCode.InternalServerError)
+            }
+        }
+    }
+    private fun Route.genePdf(){
+        get("/genPdf") {
+            try {
+                val medicalInformation = medicalInformationService.getMedicalInformation()
+                val pdffile = pdfGenerator.genPdf(medicalInformation,"medical_information")
+                call.respond(pdffile)
+            }catch(e: Exception) {
+                call.respondText("Error generationg PDF file ${e.message}", status = HttpStatusCode.InternalServerError)
             }
         }
     }
