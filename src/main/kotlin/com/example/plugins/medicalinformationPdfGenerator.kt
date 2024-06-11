@@ -4,6 +4,8 @@ import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.PDPageContentStream
 import org.apache.pdfbox.pdmodel.font.PDType1Font
+import org.apache.pdfbox.pdmodel.graphics.image.PDImage
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject
 import java.io.File
 
 //class pdf generator
@@ -27,14 +29,18 @@ class PdfGenerator(private val outPath: String) {
         document.addPage(page)
         //the setup variable
         val contentStream = PDPageContentStream(document, page)
+        //draw the logo in the pdf
+        val logo = PDImageXObject.createFromFile("src/logo.png",document)
+        contentStream.drawImage(logo,500f,750f,100f,20f)
         //setup begins here (configs)
         contentStream.beginText()
         contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12F)
-        contentStream.newLineAtOffset(50f, 750f)
         //display of the information
+        contentStream.newLineAtOffset(50f, 740f)
+        contentStream.showText("Patient: ${medicalInformation[0].patientId}")
+        contentStream.newLineAtOffset(0f, -15f)
         medicalInformation.forEach { info ->
-            contentStream.showText("Patient ID: ${info.patientId}")
-            contentStream.newLineAtOffset(0f, -15f)
+            contentStream.newLineAtOffset(0f, -30f)
             contentStream.showText("Date: ${info.data}")
             contentStream.newLineAtOffset(0f, -15f)
             contentStream.showText("Sintoms: ${info.sintoms}")

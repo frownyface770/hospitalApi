@@ -41,5 +41,5 @@ DELETE localhost:8080/medicalinformation/22/deleteMedicalInformation
 ###
 GET localhost:8080/medicalinformation/4/getMedicalInformation
 ###
-GET localhost:8080/genPdf
+GET localhost:8080/medicalinformation/4/genPdf
 ###

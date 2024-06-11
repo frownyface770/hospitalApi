@@ -83,10 +83,12 @@ class MedicalInformationRoutes {
         }
     }
     private fun Route.genePdf(){
-        get("/genPdf") {
+        get("/{id}/genPdf") {
             try {
-                val medicalInformation = medicalInformationService.getMedicalInformation()
-                val pdffile = pdfGenerator.genPdf(medicalInformation,"medical_information")
+                val id = call.parameters["id"]?.toInt() ?: return@get call.respondText("Bad request", status = HttpStatusCode.BadRequest)
+                val medicalInformation = medicalInformationService.getAllMedicalInformationByPatientId(id)
+                if (medicalInformation.isEmpty()){return@get call.respondText("No medical information found", status = HttpStatusCode.NoContent)}
+                val pdffile = pdfGenerator.genPdf(medicalInformation,"${id}_medical_information")
                 call.respond(pdffile)
             }catch(e: Exception) {
                 call.respondText("Error generationg PDF file ${e.message}", status = HttpStatusCode.InternalServerError)
