@@ -2,6 +2,7 @@ package com.example.routes
 import com.example.models.*
 import com.example.plugins.PdfGenerator
 import com.example.services.MedicalInformationService
+import com.example.services.PatientService
 import io.ktor.server.application.*
 import io.ktor.http.*
 import io.ktor.server.request.*
@@ -12,6 +13,8 @@ class MedicalInformationRoutes {
     private val medicalInformationDB = MedicalInformationDB()
     private val medicalInformationService = MedicalInformationService(medicalInformationDB)
     private val pdfGenerator = PdfGenerator("src/medicalinformation")
+    private val patientDB = PatientDB()
+    private val patientService = PatientService(patientDB)
     fun setUpMedicalInformationRoutes(route: Route) {
         route.route("/medicalinformation") {
             createMedicalInformation()
@@ -87,8 +90,10 @@ class MedicalInformationRoutes {
             try {
                 val id = call.parameters["id"]?.toInt() ?: return@get call.respondText("Bad request", status = HttpStatusCode.BadRequest)
                 val medicalInformation = medicalInformationService.getAllMedicalInformationByPatientId(id)
+                val idforpat = call.parameters["id"]?: return@get call.respondText("Bad request", status = HttpStatusCode.BadRequest)
+                val patientInformations = patientService.getPatientById(idforpat) ?: return@get call.respond(HttpStatusCode.NotFound)
                 if (medicalInformation.isEmpty()){return@get call.respondText("No medical information found", status = HttpStatusCode.NoContent)}
-                val pdffile = pdfGenerator.genPdf(medicalInformation,"${id}_medical_information")
+                val pdffile = pdfGenerator.genPdf(medicalInformation,"${id}_medical_information",patientInformations)
                 call.respond(pdffile)
             }catch(e: Exception) {
                 call.respondText("Error generationg PDF file ${e.message}", status = HttpStatusCode.InternalServerError)

@@ -1,5 +1,7 @@
 package com.example.plugins
 import com.example.models.MedicalInformation
+import com.example.models.Patient
+import kotlinx.serialization.json.Json
 import org.apache.pdfbox.pdmodel.PDDocument
 import org.apache.pdfbox.pdmodel.PDPage
 import org.apache.pdfbox.pdmodel.PDPageContentStream
@@ -22,7 +24,10 @@ class PdfGenerator(private val outPath: String) {
         }
     }
     //function to generate the pdf
-    fun genPdf(medicalInformation: List<MedicalInformation>, filename: String){
+    fun genPdf(medicalInformation: List<MedicalInformation>, filename: String, patientInformation: Patient){
+        val jsonlist = patientInformation.name
+        //val json = Json { ignoreUnknownKeys = true }
+        val name = jsonlist.firstName + " " + jsonlist.lastName
         //the set of the basic variables
         val document = PDDocument()
         val page = PDPage()
@@ -37,7 +42,8 @@ class PdfGenerator(private val outPath: String) {
         contentStream.setFont(PDType1Font.HELVETICA_BOLD, 12F)
         //display of the information
         contentStream.newLineAtOffset(50f, 740f)
-        contentStream.showText("Patient: ${medicalInformation[0].patientId}")
+        contentStream.showText("Patient: ${name}")
+        //contentStream.showText("Patient: ${medicalInformation[0].patientId}")
         contentStream.newLineAtOffset(0f, -15f)
         medicalInformation.forEach { info ->
             contentStream.newLineAtOffset(0f, -30f)
