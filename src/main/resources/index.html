@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Crud Hospital</title>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <script  >
 
         function fetchPatients() {
@@ -12,8 +12,11 @@
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then(response => response.json());
-            return patients
+            }).then(response => response.json()).then(
+                data=> {
+                    this.patients = data;
+                }
+            ).catch(error => console.error('Error:', error));
         }
         function postPatient(patient) {
             fetch("http://127.0.0.1:8080/patients/createPatient", {
@@ -21,7 +24,8 @@
             headers: {
                 'Content-Type': 'application/json'
             },
-        body: JSON.stringify(patient)}).then(response => console.log(response))
+        body: JSON.stringify(patient)}).then(response => console.log(response)).catch(error => console.error('Error:', error));
+            this.patients.push(patient)
         }
         function upPatient(patient,id) {
             fetch(`http://127.0.0.1:8080/patients/${id}/updateInfo`, {
@@ -31,26 +35,31 @@
                 },
                 body: JSON.stringify(patient)
             })
-                .then(response => response.json())
-                ;
+                .then(response => response.json()).catch(error => console.error('Error:', error));
         }
         function deletePatient(id) {
-            fetchPatients(`htttp://127.0.0.1:8080/patients/delete/${id}`, {
+            fetch(`http://127.0.0.1:8080/patients/delete/${id}`, {
                 method: 'DELETE'
-            })
+            }).catch(error => console.error('Error:', error));
         }
     </script>
     <script src="https://unpkg.com/petite-vue" defer init></script>
 </head>
 <body>
-<!-- There has to be a simpler way of doing this, there is no way this is even remotely optimal.-->
-<div v-scope="{async submitPatient(){
-await postPatient(this.patient);
-this.getPatients();},
- patient: { name: { firstName: '', lastName: '' }, age: '', email: '', gender: '', dateOfBirth: '', nationalHealthNumber: '' }
- ,patients: [],
- async getPatients() {
- this.patients = await fetchPatients();}, updatePatientData: {
+<nav>
+    <ul>
+        <li><strong>Acme Corp</strong></li>
+    </ul>
+    <ul>
+        <li><a href="/index.html">Patients</a></li>
+        <li><a href="/doctors.html">Doctors</a></li>
+        <li><a href="#">Appointments</a></li>
+    </ul>
+</nav>
+<div>
+    <main class="container">
+        <h1>Patient CRUD</h1>
+    <section v-scope="{fetchPatients, updatePatientData: {
         name: { firstName: '', lastName: '' },
         age: '',
         email: '',
@@ -59,9 +68,11 @@ this.getPatients();},
         nationalHealthNumber: ''
     },isUpdating:false,
     updateId:null,
- async updatePatient(){
-    await upPatient(this.updatePatientData,this.updateId);
-    this.getPatients();},
+    updatePatient(){
+        upPatient(this.updatePatientData,this.updateId);
+        patients = patients.map((patient) => (patient.id === this.updateId ? {...patient, ...this.updatePatientData }: patient))
+
+        },
  showUpdateForm(patient, id) {
         this.updatePatientData = JSON.parse(JSON.stringify(patient));
         this.isUpdating = true;
@@ -69,121 +80,131 @@ this.getPatients();},
     },
     submitUpdate() {
         this.updatePatient(this.updatePatientData, this.updateId);
-    }}"  >
-<form @submit.prevent="submitPatient">
-    <label>
-        First Name:
-        <input v-model="patient.name.firstName">
-    </label>
-    <br>
-    <label>
-        Last Name:
-        <input v-model="patient.name.lastName">
-    </label>
-    <br>
-    <label>
-        Age:
-        <input type="number" v-model="patient.age">
-    </label>
-    <br>
-    <label>
-        Email
-        <input type="email" v-model="patient.email">
-    </label>
-    <br>
-    <label>
-        Gender:
-        <br>
-        <label>
-            Male:
-            <input v-model="patient.gender" type="radio" value="MALE" >
-        </label>
-        <label>
-            Female:
-        <input v-model="patient.gender" type="radio" value="FEMALE" >
-        </label>
-        <label>
-            Other:
-            <input v-model="patient.gender" type="radio" value="OTHER" >
-        </label>
+    },
+    deleteId:null,
+    remove(id) {
+        console.log('Im called');
+        deletePatient(id);
+        fetchPatients();
+    }}"  @vue:mounted="fetchPatients()">
+        <section v-scope="{postPatient,
+ patient: { name: { firstName: '', lastName: '' }, age: '', email: '', gender: '', dateOfBirth: '', nationalHealthNumber: '' }
+ ,patients: []}" >
+            <form @submit.prevent="postPatient(patient)">
+                <label>
+                    First Name:
+                    <input v-model="patient.name.firstName">
+                </label>
 
-    </label>
-    <br>
-    <label>
-        Date of Birth:
-        <input v-model="patient.dateOfBirth">
-    </label>
-    <br>
-    <label>
-        National Health Number:
-        <input v-model="patient.nationalHealthNumber">
-    </label>
-    <br>
-    <button type="submit">Create Patient</button>
-</form>
+                <label>
+                    Last Name:
+                    <input v-model="patient.name.lastName">
+                </label>
 
-<div id="patientRes">
-    <div v-for="patient in patients" :key="patient.email" class="patient" >
-        <br>
-        <strong>Name: </strong> {{ patient.name.firstName }} {{ patient.name.lastName }}<br>
-        <strong>Email: </strong> {{ patient.email }}      <button @click="showUpdateForm(patient,patient.id)">Update Patient Info</button> <br>
-        <strong>National Health Number</strong> {{ patient.nationalHealthNumber}}<br><br>
-    </div>
-</div>
-    <div v-if="isUpdating">
-        <h3>Update Patient</h3>
-        <form @submit.prevent="submitUpdate">
-            <label>
-                First Name:
-                <input v-model="updatePatientData.name.firstName">
-            </label>
-            <br>
-            <label>
-                Last Name:
-                <input v-model="updatePatientData.name.lastName">
-            </label>
-            <br>
-            <label>
-                Age:
-                <input type="number" v-model="updatePatientData.age">
-            </label>
-            <br>
-            <label>
-                Email
-                <input type="email" v-model="updatePatientData.email">
-            </label>
-            <br>
-            <label>
-                Gender:
-                <br>
                 <label>
-                    Male:
-                    <input v-model="updatePatientData.gender" type="radio" value="MALE">
+                    Age:
+                    <input type="number" v-model="patient.age">
+                </label>
+
+                <label>
+                    Email
+                    <input type="email" v-model="patient.email">
+                </label>
+
+                <label>
+                    Gender:
+                    <label>
+                        Male:
+                        <input v-model="patient.gender" type="radio" value="MALE" >
+                    </label>
+                    <label>
+                        Female:
+                        <input v-model="patient.gender" type="radio" value="FEMALE" >
+                    </label>
+                    <label>
+                        Other:
+                        <input v-model="patient.gender" type="radio" value="OTHER" >
+                    </label>
+
+                </label>
+
+                <label>
+                    Date of Birth:
+                    <input v-model="patient.dateOfBirth">
+                </label>
+
+                <label>
+                    National Health Number:
+                    <input v-model="patient.nationalHealthNumber">
+                </label>
+
+                <button type="submit">Create Patient</button>
+            </form>
+
+        </section>
+        <section >
+            <h2>Patitent List</h2>
+            <div class="grid" style="grid-template-columns: auto auto">
+                <template v-for="patient in patients">
+                    <article>
+                        <strong>Name: </strong> {{ patient.name.firstName }} {{ patient.name.lastName }}<br>
+                        <strong>Email: </strong> {{ patient.email }} <button style="margin:30px" @click="showUpdateForm(patient,patient.id)">Update Patient Info</button> <br>
+                        <strong>National Health Number</strong> {{ patient.nationalHealthNumber}}<button style="margin:30px" @click="console.log('Remove button clicked'); remove(patient.id)">Remove Patient</button><br><br>
+                    </article>
+
+                </template>
+            </div>
+        </section>
+        <section v-if="isUpdating">
+            <h3>Update Patient</h3>
+            <form @submit.prevent="submitUpdate">
+                <label>
+                    First Name:
+                    <input v-model="updatePatientData.name.firstName">
                 </label>
                 <label>
-                    Female:
-                    <input v-model="updatePatientData.gender" type="radio" value="FEMALE">
+                    Last Name:
+                    <input v-model="updatePatientData.name.lastName">
                 </label>
                 <label>
-                    Other:
-                    <input v-model="updatePatientData.gender" type="radio" value="OTHER">
+                    Age:
+                    <input type="number" v-model="updatePatientData.age">
                 </label>
-            </label>
-            <br>
-            <label>
-                Date of Birth:
-                <input v-model="updatePatientData.dateOfBirth">
-            </label>
-            <br>
-            <label>
-                National Health Number:
-                <input v-model="updatePatientData.nationalHealthNumber">
-            </label>
-            <br>
-            <button type="submit">Update Patient</button>
-            <button @click="isUpdating = false">Cancel</button>
-        </form>
-    </div>
+                <label>
+                    Email
+                    <input type="email" v-model="updatePatientData.email">
+                </label>
+                <label>
+                    Gender:
+                    <label>
+                        Male:
+                        <input v-model="updatePatientData.gender" type="radio" value="MALE">
+                    </label>
+                    <label>
+                        Female:
+                        <input v-model="updatePatientData.gender" type="radio" value="FEMALE">
+                    </label>
+                    <label>
+                        Other:
+                        <input v-model="updatePatientData.gender" type="radio" value="OTHER">
+                    </label>
+                </label>
+                <label>
+                    Date of Birth:
+                    <input v-model="updatePatientData.dateOfBirth">
+                </label>
+
+                <label>
+                    National Health Number:
+                    <input v-model="updatePatientData.nationalHealthNumber">
+                </label>
+                <button type="submit">Update Patient</button>
+                <button @click="isUpdating = false">Cancel</button>
+            </form>
+        </section>
+    </section>
+
+    </main>
 </div>
 
 </body>

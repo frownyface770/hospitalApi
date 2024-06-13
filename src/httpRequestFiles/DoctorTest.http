@@ -99,7 +99,7 @@ GET http://localhost:8080/doctor/availableHours/4/05-05-2024
 Content-Type: application/json
 
 ####
-GET http://localhost:8080/doctor/printSchedule/1/17-04-2024
+GET http://localhost:8080/doctor/printSchedule/5/09-07-2024
 
 ###
 PUT http://localhost:8080/doctor/5/updateInfo

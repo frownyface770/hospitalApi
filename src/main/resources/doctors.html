@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crud Hospital</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <script  >
+
+        function fetchDoctors() {
+            const doctors = fetch("http://127.0.0.1:8080/doctor",{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json()).then(
+                data=> {
+                    this.doctors = data;
+                }
+            ).catch(error => console.error('Error:', error));
+        }
+        function postDoctor(doctor) {
+            fetch("http://127.0.0.1:8080/doctor/createDoctor", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(doctor)}).then(response => console.log(response)).catch(error => console.error('Error:', error));
+            this.doctors.push(doctor)
+        }
+        function upDoctor(doctor,id) {
+            fetch(`http://127.0.0.1:8080/doctor/${id}/updateInfo`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(doctor)
+            })
+                .then(response => response.json()).catch(error => console.error('Error:', error));
+        }
+        function deleteDoctor(id) {
+            fetch(`http://127.0.0.1:8080/doctor/delete/${id}`, {
+                method: 'DELETE'
+            }).catch(error => console.error('Error:', error));
+
+        }
+        function getSchedule(id,date) {
+            fetch(`http://127.0.0.1:8080/doctor/printSchedule/${id}/${date}`)
+        }
+    </script>
+    <script src="https://unpkg.com/petite-vue" defer init></script>
+</head>
+<body>
+<nav>
+    <ul>
+        <li><strong>Hospital Crud</strong></li>
+    </ul>
+    <ul>
+        <li><a href="#">Patients</a></li>
+        <li><a href="#">Doctors</a></li>
+        <li><a href="#">Appointments</a></li>
+    </ul>
+</nav>
+<div>
+    <main class="container">
+        <h1>Doctor CRUD</h1>
+        <section v-scope="{fetchDoctors,doctors: [], updateDoctorData: {
+        name: { firstName: '', lastName: '' },
+        age: '',
+        email: '',
+        gender: '',
+        dateOfBirth: '',
+        department: ''
+    },isUpdating:false,
+    updateId:null,
+    updateDoctor(){
+        upDoctor(this.updateDoctorData,this.updateId);
+        this.doctors = this.doctors.map((doctor) => (doctor.id === this.updateId ? {...doctor, ...this.updateDoctorData }: doctor))
+        },
+ showUpdateForm(doctor, id) {
+        this.updateDoctorData = JSON.parse(JSON.stringify(doctor));
+        this.isUpdating = true;
+        this.updateId = id;
+    },
+    submitUpdate() {
+        this.updateDoctor(this.updateDoctorData, this.updateId);
+    },
+    remove(id) {
+        console.log('Im called');
+        deleteDoctor(id);
+        this.doctors = this.doctors.filter(doctor => doctor.id !== id);
+    }}"  @vue:mounted="fetchDoctors()">
+            <section v-scope="{postDoctor,
+ doctor: { name: { firstName: '', lastName: '' }, age: '', email: '', gender: '', dateOfBirth: '', department: '' }
+ }" >
+                <form @submit.prevent="postDoctor(doctor)">
+                    <label>
+                        First Name:
+                        <input v-model="doctor.name.firstName">
+                    </label>
+
+                    <label>
+                        Last Name:
+                        <input v-model="doctor.name.lastName">
+                    </label>
+
+                    <label>
+                        Age:
+                        <input type="number" v-model="doctor.age">
+                    </label>
+
+                    <label>
+                        Email
+                        <input type="email" v-model="doctor.email">
+                    </label>
+
+                    <label>
+                        Gender:
+                        <label>
+                            Male:
+                            <input v-model="doctor.gender" type="radio" value="MALE" >
+                        </label>
+                        <label>
+                            Female:
+                            <input v-model="doctor.gender" type="radio" value="FEMALE" >
+                        </label>
+                        <label>
+                            Other:
+                            <input v-model="doctor.gender" type="radio" value="OTHER" >
+                        </label>
+
+                    </label>
+
+                    <label>
+                        Date of Birth:
+                        <input v-model="doctor.dateOfBirth">
+                    </label>
+
+                    <label>
+                        Department:
+                        <input v-model="doctor.department">
+                    </label>
+
+                    <button type="submit">Create Doctor</button>
+                </form>
+
+            </section>
+            <section >
+                <h2>Doctor List</h2>
+                <div class="grid" style="grid-template-columns: auto auto">
+                    <template v-for="doctor in doctors">
+                        <article>
+                            <strong>Name: </strong> {{ doctor.name.firstName }} {{ doctor.name.lastName }} <button style="margin:30px" @click="openSchedule(doctor.id)">Schedule</button><br>
+                            <strong>Email: </strong> {{ doctor.email }} <button style="margin:30px" @click="showUpdateForm(doctor,doctor.id)">Update Doctor Info</button> <br>
+                            <strong>National Health Number</strong> {{ doctor.department}}<button style="margin:30px" @click="console.log('Remove button clicked'); remove(doctor.id)">Remove Doctor</button><br><br>
+                        </article>
+
+                    </template>
+                </div>
+            </section>
+            <section v-if="isUpdating">
+                <h3>Update Doctor</h3>
+                <form @submit.prevent="submitUpdate">
+                    <label>
+                        First Name:
+                        <input v-model="updateDoctorData.name.firstName">
+                    </label>
+                    <label>
+                        Last Name:
+                        <input v-model="updateDoctorData.name.lastName">
+                    </label>
+                    <label>
+                        Age:
+                        <input type="number" v-model="updateDoctorData.age">
+                    </label>
+                    <label>
+                        Email
+                        <input type="email" v-model="updateDoctorData.email">
+                    </label>
+                    <label>
+                        Gender:
+                        <label>
+                            Male:
+                            <input v-model="updateDoctorData.gender" type="radio" value="MALE">
+                        </label>
+                        <label>
+                            Female:
+                            <input v-model="updateDoctorData.gender" type="radio" value="FEMALE">
+                        </label>
+                        <label>
+                            Other:
+                            <input v-model="updateDoctorData.gender" type="radio" value="OTHER">
+                        </label>
+                    </label>
+                    <label>
+                        Date of Birth:
+                        <input v-model="updateDoctorData.dateOfBirth">
+                    </label>
+
+                    <label>
+                        Department:
+                        <input v-model="updateDoctorData.department">
+                    </label>
+                    <button type="submit">Update Doctor</button>
+                    <button @click="isUpdating = false">Cancel</button>
+                </form>
+            </section>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>

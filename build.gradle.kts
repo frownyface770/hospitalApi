@@ -40,4 +40,6 @@ dependencies {
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation ("org.apache.pdfbox:pdfbox:$pdf_version")
+    //implementation("io.ktor:ktor-server-html-builder:2.0.0")
+    implementation("io.ktor:ktor-server-cors:2.1.0")
 }

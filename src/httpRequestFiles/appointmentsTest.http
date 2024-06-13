@@ -43,7 +43,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"08-05-2024",
+  "date":"08-07-2024",
   "patientID": 12,
   "time": "09:00",
   "doctorID": 5,
@@ -54,10 +54,10 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"08-05-2024",
+  "date":"08-07-2024",
   "patientID": 9,
   "time": "11:00",
-  "doctorID": 1,
+  "doctorID": 5,
   "patientComments": "Feeling nauseous after meals, need consultation."
 }
 ###
@@ -65,10 +65,10 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"08-05-2024",
+  "date":"08-07-2024",
   "patientID": 16,
   "time": "14:00",
-  "doctorID": 4,
+  "doctorID": 5,
   "patientComments": "Stomachache persists despite medication, need further evaluation."
 }
 ###
@@ -76,10 +76,10 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"08-05-2024",
+  "date":"09-07-2024",
   "patientID": 14,
   "time": "11:00",
-  "doctorID": 2,
+  "doctorID": 5,
   "patientComments": "Recent injury, need examination."
 }
 ###
@@ -87,10 +87,10 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"09-05-2024",
+  "date":"09-07-2024",
   "patientID": 5,
   "time": "15:00",
-  "doctorID": 3,
+  "doctorID": 5,
   "patientComments": "Having trouble sleeping, need advice."
 }
 
@@ -99,10 +99,10 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"09-05-2024",
+  "date":"10-07-2024",
   "patientID": 1,
   "time": "16:00",
-  "doctorID": 4,
+  "doctorID": 5,
   "patientComments": "Chronic back pain, need consultation."
 }
 ###
@@ -110,7 +110,7 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"09-05-2024",
+  "date":"09-07-2024",
   "patientID": 11,
   "time": "08:00",
   "doctorID": 5,
@@ -121,10 +121,10 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"09-05-2024",
+  "date":"09-07-2024",
   "patientID": 13,
   "time": "17:00",
-  "doctorID": 1,
+  "doctorID": 5,
   "patientComments": "High fever, need immediate attention."
 }
 
@@ -133,10 +133,10 @@ POST http://127.0.0.1:8080/appointment/createAppointment
 Content-Type: application/json
 
 {
-  "date":"09-05-2024",
+  "date":"10-07-2024",
   "patientID": 15,
   "time": "10:00",
-  "doctorID": 3,
+  "doctorID": 5,
   "patientComments": "Routine checkup."
 }
 
