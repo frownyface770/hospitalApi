@@ -47,6 +47,9 @@ class PatientDB {
             return false
         }
     }
+    fun patientExistsByNhn(nhn: String): Boolean {
+        return !transaction { Patients.select { Patients.nationalHealthNumber eq  nhn }.empty() }
+    }
 
     fun updatePatient(id: Int, patient: Patient) {
         try {
@@ -83,9 +86,9 @@ class PatientDB {
     fun addPatient(patient: Patient) {
 
         transaction {
-            if (patientExists(patient.id.toInt())) {
-                throw PatientAlreadyExistsException(patient.id)
-            }
+//            if (patientExists(patient.id.toInt())) {
+//                throw PatientAlreadyExistsException(patient.id)
+//            }
             try {
                 Patients.insert {
                     it[firstName] = patient.name.firstName

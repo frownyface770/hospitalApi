@@ -27,6 +27,9 @@ class PatientService(private val patientDB: PatientDB) {
 
     fun addPatient(newPatient: Patient) {
         try {
+            if (patientDB.patientExistsByNhn(newPatient.nationalHealthNumber)) {
+                throw PatientAlreadyExistsException()
+ 1           }
             patientDB.addPatient(newPatient)
         } catch (e: PatientAlreadyExistsException) {
             println(e.message)
