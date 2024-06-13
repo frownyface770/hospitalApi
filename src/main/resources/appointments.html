@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crud Hospital</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <script  >
+
+        function fetchAppointments() {
+            const appointments = fetch("http://127.0.0.1:8080/appointment",{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json()).then(
+                data=> {
+                    this.appointments = data;
+                }
+            ).catch(error => console.error('Error:', error));
+        }
+        function postAppointment(appointment) {
+            fetch("http://127.0.0.1:8080/appointment/createAppointment", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(appointment)}).then(response => console.log(response)).catch(error => console.error('Error:', error));
+            this.appointments.push(appointment)
+        }
+        function upAppointment(appointment,id) {
+            fetch(`http://127.0.0.1:8080/appointment/updateAppointment/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(appointment)
+            })
+                .then(response => response.json()).catch(error => console.error('Error:', error));
+        }
+        function deleteAppointment(id) {
+            fetch(`http://127.0.0.1:8080/appointment/deleteAppointment/${id}`, {
+                method: 'DELETE'
+            }).catch(error => console.error('Error:', error));
+
+        }
+    </script>
+    <script src="https://unpkg.com/petite-vue" defer init></script>
+</head>
+<body>
+<nav>
+    <ul>
+        <li><strong>Hospital Crud</strong></li>
+    </ul>
+    <ul>
+        <li><a href="#">Patients</a></li>
+        <li><a href="#">Doctors</a></li>
+        <li><a href="#">Appointments</a></li>
+    </ul>
+</nav>
+<div>
+    <main class="container">
+        <h1>Appointment CRUD</h1>
+        <section v-scope="{fetchAppointments,appointments: [], updatedAppointment: {
+        date: '',
+        patientID: '',
+        time: '',
+        doctorID: '',
+        patientComments: ''
+    },isUpdating:false,
+    updateId:null,
+    updateAppointment(){
+        upAppointment(this.updatedAppointment,this.updateId);
+        this.appointments = this.appointments.map((appointment) => (appointment.id === this.updateId ? {...appointment, ...this.updateAppointment }: appointment))
+        },
+ showUpdateForm(appointment, id) {
+        this.updatedAppointment = JSON.parse(JSON.stringify(appointment));
+        this.isUpdating = true;
+        this.updateId = id;
+    },
+    submitUpdate() {
+        this.updateAppointment(this.updatedAppointment, this.updateId);
+    },
+    remove(id) {
+        console.log('Im called');
+        deleteAppointment(id);
+        this.appointments = this.appointments.filter(appointment => appointment.id !== id);
+    }}"  @vue:mounted="fetchAppointments()">
+            <section v-scope="{postAppointment,
+ appointment: { date: '', patientID: '', time: '', doctorID: '', patientComments: ''}
+ }" >
+                <form @submit.prevent="postAppointment(appointment)">
+                    <label>
+                        Date:
+                        <input v-model="appointment.date">
+                    </label>
+
+                    <label>
+                        Patient Id:
+                        <input v-model="appointment.patientID">
+                    </label>
+
+                    <label>
+                        time:
+                        <input type="time" v-model="appointment.time">
+                    </label>
+
+                    <label>
+                        Doctor Id:
+                        <input v-model="appointment.doctorID">
+                    </label>
+
+                    <label>
+                        Comments:
+                        <input type="text" v-model="appointment.patientComments">
+                    </label>
+                    <button type="submit">Set appointment</button>
+                </form>
+
+            </section>
+            <section >
+                <h2>Appointment List</h2>
+                <div class="grid" style="grid-template-columns: auto auto">
+                    <template v-for="appointment in appointments">
+                        <article>
+                            <strong>Date: </strong> {{ appointment.date }} {{ appointment.time }} <br>
+                            <strong>Patient Id: </strong> {{ appointment.patientID }} <button style="margin:30px" @click="showUpdateForm(appointment,appointment.id)">Update Appointment Info</button> <br>
+                            <strong>Patient Comments:</strong> {{ appointment.patientComments}}<button style="margin:30px" @click="remove(appointment.id)">Remove Appointment</button><br><br>
+                        </article>
+
+                    </template>
+                </div>
+            </section>
+            <section v-if="isUpdating">
+                <h3>Update Appointment</h3>
+                <form @submit.prevent="submitUpdate">
+                    <label>
+                        Date:
+                        <input  type="text" v-model="updatedAppointment.date">
+                    </label>
+                    <label>
+                        Time:
+                        <input v-model="updatedAppointment.time" type="text">
+                    </label>
+                    <label>
+                        Patient Id:
+                        <input type="number" v-model="updatedAppointment.patientID">
+                    </label>
+                    <label>
+                        Doctor Id:
+                        <input  v-model="updatedAppointment.doctorID">
+                    </label>
+                    <label>
+                        Comments:
+                        <input v-model="updatedAppointment.patientComments">
+                    </label>
+
+                    <button type="submit">Update Appointment</button>
+                    <button @click="isUpdating = false">Cancel</button>
+                </form>
+            </section>
+        </section>
+    </main>
+</div>
+</body>
+</html>
