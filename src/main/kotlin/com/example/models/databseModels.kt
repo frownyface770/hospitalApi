@@ -39,6 +39,8 @@ object MedicalInformations : Table() {
     val diagonostic = varchar("diagonostic", length = 255)
     val medication = varchar("medication", length = 255)
     val notes = text("notes")
+
+    override  val primaryKey = PrimaryKey(id, name = "PK_MedicalInformation_ID")
 }
     object Appointments : Table() {
     val id = integer("id").autoIncrement()

@@ -1,6 +1,6 @@
 package com.example.exceptions
 
-class PatientAlreadyExistsException(id: String) : Exception("Patient with $id already exists")
+class PatientAlreadyExistsException : Exception("Patient already exists")
 class PatientNotFoundException(id: String) : Exception("Patient with $id id not found")
 
 
