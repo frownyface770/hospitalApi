@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crud Hospital</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <script>
+        function fetchMedicalInformation(){
+            const medicalinformation = fetch("http://127.0.0.1:8080/medicalinformation", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => response.json()).then(
+                data => {
+                    this.medicalinformation = data;
+                }
+            ).catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><strong>Acme Corp</strong></li>
+        </ul>
+        <ul>
+            <li><a href="/index.html">Patients</a></li>
+            <li><a href="/doctors.html">Doctors</a></li>
+            <li><a href="/appointments.html">Appointments</a></li>
+            <li><a href="#">MedicalInformation</a></li>
+        </ul>
+    </nav>
+</body>
+</html>
