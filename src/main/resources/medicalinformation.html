@@ -17,6 +17,44 @@
                 }
             ).catch(error => console.error('Error:', error));
         }
+        function postMedicalInformation(medicalinformation) {
+            fetch("http://127.0.0.1:8080/medicalinformation/createMedicalInformation", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(medicalinformation)}).then(response => console.log(response)).catch(error => console.error('Error:', error));
+            this.medicalinformation.push(medicalinformation)
+        }
+        function upMedicalInformation(medicalinformation,id) {
+            fetch(`http://127.0.0.1:8080/medicalinformation/${id}/updateMedicalInformation`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(medicalinformation)
+            })
+                .then(response => response.json()).catch(error => console.error('Error:', error));
+        }
+        function upMedicalInformationByPatient(medicalinformation,id) {
+            fetch(`http://127.0.0.1:8080/medicalinformation/${id}/updateMedicalInformation`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(medicalinformation)
+            })
+                .then(response => response.json()).catch(error => console.error('Error:', error));
+        }
+        function deleteMedicalInformation(id) {
+            fetch(`http://127.0.0.1:8080/medicalinformation/${id}/deleteMedicalInformation`, {
+                method: 'DELETE'
+            }).catch(error => console.error('Error:', error));
+
+        }
+        function generatePDF(id) {
+            fetch(`http://127.0.0.1:8080/medicalinformation/${id}/genPdf`)
+        }
     </script>
     <script src="https://unpkg.com/petite-vue" defer init></script>
 </head>
