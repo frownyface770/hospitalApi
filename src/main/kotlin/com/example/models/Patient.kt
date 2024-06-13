@@ -76,19 +76,11 @@ class PatientDB {
             Patients.selectAll().map { rowToPatient(it) }
 
         }
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            return emptyList()
-//        }
-
     }
 
     fun addPatient(patient: Patient) {
 
         transaction {
-//            if (patientExists(patient.id.toInt())) {
-//                throw PatientAlreadyExistsException(patient.id)
-//            }
             try {
                 Patients.insert {
                     it[firstName] = patient.name.firstName

@@ -32,13 +32,18 @@ object PDFMaker {
         contentStream.showText("Schedule for: ${owner.name.firstName} ${owner.name.lastName}     Department: ${owner.department}")
         contentStream.endText()
 
-        // Write date for the week
+        // Format start date
         var dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
         val startDate = LocalDate.parse(rawStartDate,dateFormatter)
 
+        //Format start date in a more interesting format to display, and store in another variable,
+        // so we can still use previous format.
         dateFormatter = DateTimeFormatter.ofPattern("MMMM dd, yyyy")
         val formattedDate = startDate.format(dateFormatter)
+        //Add 6 days to start date and format it
         val endDate = startDate.plusDays(6).format(dateFormatter)
+
+        //Write dates
         contentStream.beginText()
         contentStream.newLineAtOffset(50f, 730f)
         contentStream.showText("Week of: $formattedDate - $endDate")
@@ -52,7 +57,7 @@ object PDFMaker {
         val days = listOf("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
 
         //Get current day of the week by choosing correct offset and using the rotate method to shift by that offset.
-
+        //Meaning if the start date is at a Wednesday and not at a monday we will have to shift the list by 5. Etc.
         val weekDay = startDate.dayOfWeek.toString()
         val daysToShift = when(weekDay) {
             "MONDAY" -> 0
@@ -64,9 +69,10 @@ object PDFMaker {
             "SUNDAY" -> 1
             else -> 0
         }
-        Collections.rotate(days,daysToShift)
-        // Get Schedule data from the database
 
+        Collections.rotate(days,daysToShift)
+
+        // Get Schedule data from the database
         val scheduleData = getData(appointments,startDate, weekDay)
 
         // Draw row headers with borders and centered text
@@ -195,14 +201,11 @@ object PDFMaker {
         }
         //While we don't reach the endDate, for every appointment we have if the dates match, store it in the appointments for day
         while (calendar.time <= endDate) {
-            val dayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) +weekDayOffSet)%7 //- 2 // Adjusting for Sunday
+            val dayOfWeek = (calendar.get(Calendar.DAY_OF_WEEK) +weekDayOffSet)%7 // Adjusting for Sunday
             val appointmentsForDay = appointmentList.filter { appointment ->
                 val dateString = appointment.date
 
                 val (day,month,year) = dateString.split("-")
-
-
-                //val calendarDate = calendar.time
 
                 calendar.get(Calendar.YEAR) == year.toInt() && calendar.get(Calendar.MONTH) +1== month.toInt() && calendar.get(Calendar.DAY_OF_MONTH) == day.toInt()
 
@@ -217,7 +220,6 @@ object PDFMaker {
                 val appointmentInfo = "Appointment"
                 scheduleData[dayOfWeek][hourOfDay] = appointmentInfo
             }
-
 
             //While they still have the same 8:00 to 12:00 and 13:00 to 18:00
 

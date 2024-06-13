@@ -70,7 +70,6 @@ class AppointmentDB {
                 throw AppointmentAlreadyExistsException()
             }
             throw e
-           // return false
         }
     }
      fun updateAppointment(id:Int,updatedAppointment: Appointment) {
