@@ -70,5 +70,122 @@
             <li><a href="#">MedicalInformation</a></li>
         </ul>
     </nav>
+    <div>
+        <main class="container">
+            <h1>Medical Information CRUD</h1>
+            <section v-scope="{fetchMedicalInformation, medicalInformationList: [], updateMedicalInformationData: {
+            patientId: '',
+            data: '',
+            sintoms: '',
+            diagonostic: '',
+            medication: '',
+            notes: ''
+        }, isUpdating: false, updateId: null,
+        updateMedicalInformation(){
+            upMedicalInformation(this.updateMedicalInformationData, this.updateId);
+            this.medicalInformationList = this.medicalInformationList.map((info) =>
+                (info.id === this.updateId ? {...info, ...this.updateMedicalInformationData} : info)
+            );
+        },
+        showUpdateForm(info, id) {
+            this.updateMedicalInformationData = JSON.parse(JSON.stringify(info));
+            this.isUpdating = true;
+            this.updateId = id;
+        },
+        submitUpdate() {
+            this.updateMedicalInformation(this.updateMedicalInformationData, this.updateId);
+        },
+        remove(id) {
+            console.log('Remove button clicked');
+            deleteMedicalInformation(id);
+            this.medicalInformationList = this.medicalInformationList.filter(info => info.id !== id);
+        }}" @vue:mounted="fetchMedicalInformation()">
+                <section v-scope="{postMedicalInformation, medicalInformation: {
+                patientId: '',
+                data: '',
+                sintoms: '',
+                diagonostic: '',
+                medication: '',
+                notes: ''
+            }}">
+                    <form @submit.prevent="postMedicalInformation(medicalInformation)">
+                        <label>
+                            Patient ID:
+                            <input v-model="medicalInformation.patientId" type="number">
+                        </label>
+                        <label>
+                            Date:
+                            <input v-model="medicalInformation.data" type="date">
+                        </label>
+                        <label>
+                            Symptoms:
+                            <input v-model="medicalInformation.sintoms" type="text">
+                        </label>
+                        <label>
+                            Diagnostic:
+                            <input v-model="medicalInformation.diagonostic" type="text">
+                        </label>
+                        <label>
+                            Medication:
+                            <input v-model="medicalInformation.medication" type="text">
+                        </label>
+                        <label>
+                            Notes:
+                            <textarea v-model="medicalInformation.notes"></textarea>
+                        </label>
+                        <button type="submit">Create Medical Information</button>
+                    </form>
+                </section>
+                <section>
+                    <h2>Medical Information List</h2>
+                    <div class="grid" style="grid-template-columns: auto auto">
+                        <template v-for="info in medicalInformationList">
+                            <article>
+                                <strong>Patient ID: </strong> {{ info.patientId }}<br>
+                                <strong>Date: </strong> {{ info.data }}<br>
+                                <strong>Symptoms: </strong> {{ info.sintoms }}<br>
+                                <strong>Diagnostic: </strong> {{ info.diagonostic }}<br>
+                                <strong>Medication: </strong> {{ info.medication }}<br>
+                                <strong>Notes: </strong> {{ info.notes }}<br>
+                                <button style="margin:30px" @click="showUpdateForm(info, info.id)">Update Info</button>
+                                <button style="margin:30px" @click="remove(info.id)">Remove Info</button><br><br>
+                            </article>
+                        </template>
+                    </div>
+                </section>
+                <section v-if="isUpdating">
+                    <h3>Update Medical Information</h3>
+                    <form @submit.prevent="submitUpdate">
+                        <label>
+                            Patient ID:
+                            <input v-model="updateMedicalInformationData.patientId" type="number">
+                        </label>
+                        <label>
+                            Date:
+                            <input v-model="updateMedicalInformationData.data" type="date">
+                        </label>
+                        <label>
+                            Symptoms:
+                            <input v-model="updateMedicalInformationData.sintoms" type="text">
+                        </label>
+                        <label>
+                            Diagnostic:
+                            <input v-model="updateMedicalInformationData.diagonostic" type="text">
+                        </label>
+                        <label>
+                            Medication:
+                            <input v-model="updateMedicalInformationData.medication" type="text">
+                        </label>
+                        <label>
+                            Notes:
+                            <textarea v-model="updateMedicalInformationData.notes"></textarea>
+                        </label>
+                        <button type="submit">Update Medical Information</button>
+                        <button @click="isUpdating = false">Cancel</button>
+                    </form>
+                </section>
+            </section>
+        </main>
+    </div>
 </body>
 </html>

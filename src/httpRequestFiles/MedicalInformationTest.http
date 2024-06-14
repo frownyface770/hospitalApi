@@ -13,13 +13,13 @@ Content-Type: application/json
   "notes": "bateu com a cabeça, deve beber água."
 }
 ###
-PUT localhost:8080/medicalinformation/22/updateMedicalInformation
+PUT localhost:8080/medicalinformation/25/updateMedicalInformation
 Content-Type: application/json
 
 {
   "patientId": 4,
   "data": "03/06/2024",
-  "sintoms": "diarreia severa",
+  "sintoms": "diarreia severa moded",
   "diagnostic": "comeu coisas más",
   "medication": "beber muita água e tomar algo",
   "notes": "comeu algo que não devia, deve beber água."
