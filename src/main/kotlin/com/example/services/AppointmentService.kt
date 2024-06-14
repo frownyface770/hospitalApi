@@ -5,7 +5,7 @@ import com.example.exceptions.InvalidDateException
 import com.example.exceptions.InvalidTimeException
 import com.example.models.Appointment
 import com.example.models.AppointmentDB
-import com.example.models.Validation
+import com.example.plugins.Validation
 
 class AppointmentService(private val appointmentDB: AppointmentDB) {
     fun getApointments(id:Int): List<Appointment> {
@@ -43,6 +43,8 @@ class AppointmentService(private val appointmentDB: AppointmentDB) {
         }
 
     }
-
+    fun getAllAppointments(): List<Appointment> {
+        return appointmentDB.getAllAppointments()
+    }
 
 }

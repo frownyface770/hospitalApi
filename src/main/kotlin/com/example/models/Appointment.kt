@@ -23,6 +23,9 @@ class AppointmentDB {
         }
     }
 
+    fun getAllAppointments(): List<Appointment> {
+        return transaction { Appointments.selectAll().map { rowToAppointment(it) } }
+    }
     fun getAppointmentByPatient(id: Int):List<Appointment> {
         try {
             return transaction {
@@ -66,7 +69,7 @@ class AppointmentDB {
             //We have a unique index in the database table of the date, time and doc id, if we try to insert another
             // appointment with those same details and exception is thrown. That message contains this exact message.
             // So we catch it and return a more meaningful message to the user.
-            if (e.message?.contains("appointments_date_time_doctorid_unique") == true) {
+            if (e.message?.contains("appointments_date_time_doctorid_unique",ignoreCase = true) == true) {
                 throw AppointmentAlreadyExistsException()
             }
             throw e

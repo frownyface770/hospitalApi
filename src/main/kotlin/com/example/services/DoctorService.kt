@@ -5,7 +5,7 @@ import com.example.exceptions.InvalidDateException
 import com.example.models.Appointment
 import com.example.models.Doctor
 import com.example.models.DoctorDB
-import com.example.models.Validation
+import com.example.plugins.Validation
 import com.example.plugins.PDFMaker
 import java.time.LocalDate
 import java.time.LocalTime

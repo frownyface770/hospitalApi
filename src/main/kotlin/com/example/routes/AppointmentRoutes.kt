@@ -20,11 +20,23 @@ class AppointmentRoutes {
             createAppointment()
             updateAppointment()
             deleteAppointment()
+            getAllAppointments()
+        }
+    }
+    private fun Route.getAllAppointments() {
+        get {
+            try {
+                val response = appointmentService.getAllAppointments()
+                call.respond(response)
+            } catch (e: Exception) {
+                call.respond(HttpStatusCode.InternalServerError)
+                println("${e.printStackTrace()} ${e.message}")
+            }
+
         }
     }
 
-    //If an error occurs it will always go into the catch and never use the success boolean
-    //Must change
+
     private fun Route.createAppointment() {
         post("/createAppointment") {
             val appointment = call.receive<Appointment>()
@@ -54,7 +66,6 @@ class AppointmentRoutes {
             )
             try {
                 val appointmentStorage = appointmentService.getApointments(id.toInt())
-
                 call.respond(appointmentStorage)
 
             } catch (e: Exception) {
